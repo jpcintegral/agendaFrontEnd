@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { jwtDecode } from 'jwt-decode';
-import { environment } from '../../environments/environments.prot';
+import { environment } from '../../environments/environments.prod';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {

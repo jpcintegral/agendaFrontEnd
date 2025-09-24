@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { io, Socket } from 'socket.io-client';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
-import { environment } from '../../environments/environments.prot';
+import { environment } from '../../environments/environments.prod';
 
 @Injectable({ providedIn: 'root' })
 export class RealtimeService {
