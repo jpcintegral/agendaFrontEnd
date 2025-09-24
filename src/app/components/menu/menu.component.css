@@ -1,24 +1,87 @@
-.sidenav-container { height: 100vh; }
-    .sidenav { width: 220px; }
-    mat-toolbar { font-size: 18px; }
-
-    /* Forzar que el sidenav-container ocupe toda la altura */
 .sidenav-container {
-  height: 100vh; 
+  height: 100vh;
 }
 
-/* Que el contenido principal también ocupe todo el alto */
+.sidenav {
+  padding-top: 100px;
+  width: 220px;
+  background-color: #073c5f !important;
+  color: #ffffff !important; /* Letras blancas por defecto */
+}
+
+/* Texto de los items del menú */
+.sidenav .mat-list-item {
+  color: #ffffff !important;
+}
+
+/* Hover de los items */
+.sidenav .mat-list-item:hover {
+  background-color: rgba(255, 255, 255, 0.1); /* ligero efecto hover */
+}
+
+/* Si hay iconos dentro de los items */
+.sidenav .mat-list-item mat-icon {
+  color: #ffffff !important;
+}
+
+
+
+.mat-drawer-inner-container { color: #ffffff; }
+
+.toolbar {
+  font-size: 18px;
+  position: relative;
+}
+
+
+.mdc-list-item__primary-text{color: #ffffff;}
+
+.toolbar-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-weight: bold;
+  color: #ffffff;
+}
+
 .sidenav-content {
   display: flex;
   flex-direction: column;
   height: 100%;
 }
 
-/* Que el wrapper de contenido crezca si no hay tablas */
 .content-wrapper {
-  flex: 1;         
+  position: relative;
+  flex: 1;
+  height: 100%;
+  overflow: hidden;
+  background-image: url('/assets/reuniones.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.background-layer {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(34, 34, 34, 0.767);
+  backdrop-filter: blur(6px);
+  z-index: 1;
+}
+
+.content {
+  position: relative;
+  z-index: 2;
   padding: 16px;
-  min-height: 100%; 
-  background-color: #f5f5f5; 
-  padding-bottom: 300px;
+  height: 100%;
+  overflow: auto;
+}
+
+/* Responsivo */
+@media (max-width: 1024px) {
+  .content { padding: 12px; }
+}
+
+@media (max-width: 768px) {
+  .content { padding: 8px; }
 }

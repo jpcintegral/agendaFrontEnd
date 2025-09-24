@@ -1,4 +1,7 @@
-import { Component } from '@angular/core';
+
+
+
+import { Component, ViewEncapsulation  } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
@@ -15,8 +18,9 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
   standalone: true,
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.css'],
+  encapsulation: ViewEncapsulation.None, 
   imports: [
-    CommonModule,
+   CommonModule,
     RouterModule,
     MatSidenavModule,
     MatToolbarModule,
@@ -30,15 +34,14 @@ export class MenuComponent {
   sidenavOpened = true;
 
   constructor(private router: Router, private breakpointObserver: BreakpointObserver) {
-    // Detectar si es móvil
+    // Detectar si es móvil o escritorio
     this.breakpointObserver.observe([Breakpoints.Handset]).subscribe(result => {
       this.isMobile = result.matches;
-      this.sidenavOpened = !this.isMobile;
+      this.sidenavOpened = !this.isMobile; // escritorio: abierto, móvil: cerrado por defecto
     });
   }
 
   logout() {
-   
     localStorage.removeItem('jwt');
     this.router.navigate(['/login']);
   }

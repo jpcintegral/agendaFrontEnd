@@ -1,4 +1,4 @@
-<mat-tab-group (selectedIndexChange)="onTabChange($event)">
+<mat-tab-group class="custom-tab-group" (selectedIndexChange)="onTabChange($event)">
   <mat-tab label="Todos ({{ events.length }})" (click)="filterStatus='all'; applyFilter()"></mat-tab>
   <mat-tab label="Aprobados ({{ countByStatus('aprobado') }})" (click)="filterStatus='aprobado'; applyFilter()"></mat-tab>
   <mat-tab label="Considerados ({{ countByStatus('considerando') }})" (click)="filterStatus='considerando'; applyFilter()"></mat-tab>
@@ -6,33 +6,56 @@
   <mat-tab label="Rechazados ({{ countByStatus('rechazado') }})" (click)="filterStatus='rechazado'; applyFilter()"></mat-tab>
 </mat-tab-group>
 
-
 <div class="event-grid">
   <mat-card *ngFor="let event of filteredEvents" class="event-card" [ngClass]="getStatusClass(event.status)">
-    <!-- Badge de orden -->
+    
     <div class="order-badge">{{ event.order }}</div>
 
-    <mat-card-header>
+    <mat-card-header >
       <mat-card-title>{{ event.title }}</mat-card-title>
       <mat-card-subtitle>
         <span class="status-badge">{{ event.status | uppercase }}</span>
       </mat-card-subtitle>
+         
     </mat-card-header>
-
+     <hr class="divider" />
+     
     <mat-card-content class="card-content-wrapper">
-      <p>{{ event.description }}</p>
+      <p class="description">{{ event.description }}</p>
       <p><strong>Inicio:</strong> {{ event.startDateTime | date:'short' }}</p>
       <p><strong>Fin:</strong> {{ event.endDateTime | date:'short' }}</p>
       <p><strong>Duración:</strong> {{ event.durationHours }} hrs</p>
     </mat-card-content>
 
     <mat-card-actions class="card-actions">
-      <button mat-raised-button color="primary" *ngIf="userRole === 'presidente' && event.status === 'pendiente'" (click)="approveEvent(event)">
-        Aprobar
-      </button>
-      <button mat-raised-button color="accent" *ngIf="userRole === 'secretaria' || userRole === 'presidente'  ||  isUserAssigned(event)">
-        Ver
-      </button>
+     <mat-card-actions class="card-actions">
+  <mat-form-field appearance="fill" style="width: 100%;">
+    <mat-label>Acción</mat-label>
+    <mat-select (selectionChange)="onStatusChange(event, $event.value)">
+      <!-- Opción Ver -->
+      <mat-option *ngIf="userRole === 'secretaria' || userRole === 'presidente' || isUserAssigned(event)" [value]="'ver'">
+        <mat-icon>visibility</mat-icon> Ver
+      </mat-option>
+
+      <!-- Opción Aprobar -->
+      <mat-option *ngIf="userRole === 'presidente' && (event.status === 'pendiente' || event.status === 'considerando')" [value]="'aprobar'">
+        <mat-icon>check_circle</mat-icon> Aprobar
+      </mat-option>
+
+      <!-- Opción Cancelar -->
+      <mat-option *ngIf="(userRole === 'presidente' || userRole === 'secretaria') && (event.status !== 'pendiente' && event.status !== 'rechazado')" [value]="'cancelar'">
+        <mat-icon>cancel</mat-icon> Cancelar
+      </mat-option>
+
+      <!-- Opción Eliminar -->
+      <mat-option *ngIf="event.status === 'pendiente' || event.status === 'cancelado'" [value]="'eliminar'">
+        <mat-icon>delete</mat-icon> Eliminar
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</mat-card-actions>
+
     </mat-card-actions>
+
   </mat-card>
 </div>

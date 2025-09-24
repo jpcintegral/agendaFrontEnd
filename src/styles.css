@@ -25,3 +25,28 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   gap: 16px;
   padding: 16px;
 }
+
+
+/* Sobrescribir toolbar primary */
+.mat-toolbar.mat-primary {
+  background-color: #073c5f  !important; /* negro */
+  color: #fff !important; /* texto blanco */
+}
+
+/* Sobrescribir botones primary */
+.mat-flat-button.mat-primary,
+.mat-raised-button.mat-primary,
+.mat-stroked-button.mat-primary,
+.mat-icon-button.mat-primary {
+  background-color: #5a5a5a !important; /* negro */
+  color: #fff !important;
+}
+
+/* Íconos primary */
+.mat-icon.mat-primary {
+  color: #5a5a5a !important;
+}
+
+
+
+

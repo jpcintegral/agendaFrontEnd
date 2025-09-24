@@ -1,103 +1,154 @@
-.event-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 16px;
-  padding: 16px;
+
+/* ===== Tab Group Estilo Elegante ===== */
+.custom-tab-group {
+  /* Fondo y sombra del grupo */
+  background: #ffffff;
+  border-radius: 6px;
+  padding: 4px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+
+  /* Variables MDC */
+  --mat-tab-header-background: linear-gradient(90deg, #024959, #037ca1);
+  --mat-tab-header-active-label-text-color: #020202;
+  --mat-tab-header-inactive-label-text-color: rgba(84, 85, 85, 0.7);
+  --mat-tab-header-ink-bar-color: #ffd600;
+  --mat-tab-header-label-padding: 0.5rem 1rem;
 }
 
+/* Borde redondeado del header */
+.custom-tab-group .mat-mdc-tab-header {
+  border-radius: 10px 10px 0 0;
+}
+
+/* Tabs individuales */
+.custom-tab-group .mat-mdc-tab {
+  border-radius: 8px 8px 0 0;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* Hover */
+.custom-tab-group .mat-mdc-tab:hover {
+  background: rgb(0, 98, 117);
+  color: #ffffff;
+}
+
+/* Active */
+.custom-tab-group .mat-mdc-tab.mat-mdc-tab-active {
+  background: #006175;
+  color: #ffffff;
+}
+
+
+/* ===== Grid de Eventos ===== */
+.event-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  padding: 0 16px;
+}
+
+/* ===== Tarjeta de Evento ===== */
 .event-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between; /* mantiene botones al fondo */
-  position: relative; /* para el badge */
-  transition: transform 0.2s, box-shadow 0.2s;
-  word-wrap: break-word;
-  min-height: 220px; /* asegura altura mínima para tarjetas cortas */
-  padding-bottom: 8px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+  transition: transform 0.1s, box-shadow 0.2s;
+  background-color: #f9f9f9;
 }
 
 .event-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+ 
+  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
 }
 
-.event-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between; /* asegura que el footer quede abajo */
-  position: relative; 
-  transition: transform 0.2s, box-shadow 0.2s;
-  word-wrap: break-word;
-  min-height: 220px; 
-}
-
-.card-content-wrapper {
-  flex: 1; /* ocupa todo el espacio disponible y empuja el footer abajo */
-}
 
 .order-badge {
   position: absolute;
-  top: -3px;
-  right: -8px; /* sobresale un poco hacia afuera */
-  background-color: #1976d2; /* azul Material */
-  color: white;
+  top: 10px;
+  color: #ffffff;
+  right: 10px;
   font-weight: bold;
-  border-radius: 50%;
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.8rem;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  z-index: 10;
 }
+
 .status-badge {
-  padding: 2px 8px;
-  border-radius: 12px;
+  padding: 2px 6px;
+  border-radius: 6px;
   font-size: 0.75rem;
-  font-weight: bold;
-  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #fff;
 }
 
-.status-approved { background-color: #4caf50; }
-.status-pending { background-color: #ff9800; }
-.status-rejected { background-color: #f44336; }
-.status-considered {  background-color: #2196f3; }
 
 
+/* Contenido */
+.card-content-wrapper p {
+  margin: 6px 0;
+  line-height: 1.4;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+/* Acciones */
 .card-actions {
   display: flex;
-  justify-content: flex-end; /* botones a la derecha */
-  gap: 8px;
-   flex-wrap: wrap;
-  padding: 8px 16px;
+  gap: 10px;
+  padding: 12px;
+  justify-content: flex-end;
 }
 
-.left-actions button,
-.right-actions button {
-  min-width: 100px;
-  margin-top: 4px; /* un poco de espacio entre botones en móviles */
+.card-actions button {
+  font-weight: 600;
 }
 
-/* Media queries para móviles */
-@media (max-width: 600px) {
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
   .event-grid {
-    grid-template-columns: 1fr; /* una tarjeta por fila */
-    padding: 8px;
+    grid-template-columns: 1fr;
+    padding: 0 8px;
   }
+}
 
-  .event-card mat-card-content p {
-    font-size: 1.1rem; /* texto más legible en móvil */
-    margin: 4px 0;
-  }
 
-  .card-actions {
-    flex-direction: column; /* botones uno debajo del otro */
-    gap: 8px;
-  }
+.status-approved {
+  border-left: 15px solid #43a047;
+  .status-badge { background-color: #43a047; }
+  .order-badge {background: #43a047;}
+}
 
-  .status-badge {
-    font-size: 0.7rem;
-    padding: 2px 6px;
-  }
+.status-considered {
+  border-left: 15px solid #0288d1; 
+  .status-badge { background-color: #0288d1; }
+  .order-badge {background: #0288d1;}
+}
+
+.status-pending {
+  border-left: 15px solid #fbc02d;
+  .status-badge { background-color: #fbc02d; }
+  .order-badge {background: #fbc02d;}
+  
+}
+
+.status-rejected {
+  border-left: 15px solid #e53935; 
+  .status-badge { background-color: #e53935; } 
+}
+
+mat-card-header {
+  transition: border-color 0.3s ease;
+}
+
+
+
+.divider {
+  border: none;
+  height: 5px;
+  background-color: rgba(53, 53, 53, 0.2);
+  margin: 0px;
+   width: 99%;;
 }

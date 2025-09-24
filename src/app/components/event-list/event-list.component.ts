@@ -4,8 +4,11 @@ import { EventService } from '../../services/event.service';
 import { RealtimeService } from '../../services/realtime.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 
 type EventStatus = 'aprobado' | 'considerando' | 'pendiente' | 'rechazado';
@@ -26,7 +29,10 @@ interface ApproveEventResponse {
     MatCardModule,
     MatButtonModule,
     MatTabsModule,
-    MatSnackBarModule 
+    MatSnackBarModule,
+    MatIconModule,
+    MatSelectModule,
+    MatFormFieldModule
   ]
 })
 export class EventListComponent implements OnInit {
@@ -182,4 +188,22 @@ approveEvent(event: any) {
   countByStatus(status: string) {
     return this.events.filter(e => e.status === status).length;
   }
+
+  onStatusChange(event: any, action: string) {
+  switch (action) {
+    case 'ver':
+      //this.viewEvent(event);
+      break;
+    case 'aprobar':
+      //this.approveEvent(event);
+      break;
+    case 'cancelar':
+      //this.cancelEvent(event);
+      break;
+    case 'eliminar':
+      //this.deleteEvent(event);
+      break;
+  }
+}
+
 }

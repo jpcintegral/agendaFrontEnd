@@ -4,28 +4,38 @@
     #sidenav
     [mode]="isMobile ? 'over' : 'side'"
     [(opened)]="sidenavOpened"
+    class="sidenav"
   >
     <mat-nav-list>
-      <a mat-list-item routerLink="/events" (click)="isMobile ? toggleSidenav() : null">eventos</a>
-       <a mat-list-item routerLink="/events/new" (click)="isMobile ? toggleSidenav() : null">Crea evento</a>
-
-     
+      <a mat-list-item routerLink="/events" (click)="isMobile ? toggleSidenav() : null">
+        Eventos
+      </a>
+      <a mat-list-item routerLink="/events/new" (click)="isMobile ? toggleSidenav() : null">
+        Crear Evento
+      </a>
+      <a mat-list-item (click)="logout()">
+        Salir
+      </a>
     </mat-nav-list>
   </mat-sidenav>
 
   <!-- Contenido principal -->
   <mat-sidenav-content class="sidenav-content">
-    <mat-toolbar color="primary">
+    <mat-toolbar color="primary" class="toolbar">
+      <!-- Botón menú solo en móviles -->
       <button mat-icon-button (click)="toggleSidenav()" *ngIf="isMobile">
         <mat-icon>menu</mat-icon>
       </button>
-      <span>Mi Sistema</span>
-      <span class="flex-1"></span>
-      <button mat-button (click)="logout()">Salir</button>
+
+      <!-- Título centrado -->
+      <span class="toolbar-title">AGENDA</span>
     </mat-toolbar>
 
     <div class="content-wrapper">
-      <router-outlet></router-outlet>
+      <div class="background-layer"></div>
+      <div class="content">
+        <router-outlet></router-outlet>
+      </div>
     </div>
   </mat-sidenav-content>
 </mat-sidenav-container>
