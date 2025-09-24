@@ -1,0 +1,38 @@
+<mat-tab-group (selectedIndexChange)="onTabChange($event)">
+  <mat-tab label="Todos ({{ events.length }})" (click)="filterStatus='all'; applyFilter()"></mat-tab>
+  <mat-tab label="Aprobados ({{ countByStatus('aprobado') }})" (click)="filterStatus='aprobado'; applyFilter()"></mat-tab>
+  <mat-tab label="Considerados ({{ countByStatus('considerando') }})" (click)="filterStatus='considerando'; applyFilter()"></mat-tab>
+  <mat-tab label="Pendientes ({{ countByStatus('pendiente') }})" (click)="filterStatus='pendiente'; applyFilter()"></mat-tab>
+  <mat-tab label="Rechazados ({{ countByStatus('rechazado') }})" (click)="filterStatus='rechazado'; applyFilter()"></mat-tab>
+</mat-tab-group>
+
+
+<div class="event-grid">
+  <mat-card *ngFor="let event of filteredEvents" class="event-card" [ngClass]="getStatusClass(event.status)">
+    <!-- Badge de orden -->
+    <div class="order-badge">{{ event.order }}</div>
+
+    <mat-card-header>
+      <mat-card-title>{{ event.title }}</mat-card-title>
+      <mat-card-subtitle>
+        <span class="status-badge">{{ event.status | uppercase }}</span>
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content class="card-content-wrapper">
+      <p>{{ event.description }}</p>
+      <p><strong>Inicio:</strong> {{ event.startDateTime | date:'short' }}</p>
+      <p><strong>Fin:</strong> {{ event.endDateTime | date:'short' }}</p>
+      <p><strong>Duración:</strong> {{ event.durationHours }} hrs</p>
+    </mat-card-content>
+
+    <mat-card-actions class="card-actions">
+      <button mat-raised-button color="primary" *ngIf="userRole === 'presidente' && event.status === 'pendiente'" (click)="approveEvent(event)">
+        Aprobar
+      </button>
+      <button mat-raised-button color="accent" *ngIf="userRole === 'secretaria' || userRole === 'presidente'  ||  isUserAssigned(event)">
+        Ver
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>

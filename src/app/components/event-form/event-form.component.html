@@ -1,0 +1,75 @@
+<mat-card class="container">
+  <form [formGroup]="form" (ngSubmit)="submit()" class="form-container">
+
+    <!-- Título -->
+    <mat-form-field appearance="fill" style="width:100%">
+      <mat-label>Título</mat-label>
+      <input matInput formControlName="title" />
+    </mat-form-field>
+
+    <!-- Descripción -->
+    <mat-form-field appearance="fill" style="width:100%">
+      <mat-label>Descripción</mat-label>
+      <textarea matInput formControlName="description"></textarea>
+    </mat-form-field>
+
+    <!-- Fecha de inicio -->
+    <mat-form-field appearance="fill" style="width:48%; margin-right:4%">
+      <mat-label>Fecha inicio</mat-label>
+      <input matInput [matDatepicker]="startPicker" formControlName="startDate">
+      <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+      <mat-datepicker #startPicker startView="month" [startAt]="today"></mat-datepicker>
+    </mat-form-field>
+
+    <!-- Hora de inicio -->
+    <mat-form-field appearance="fill" style="width:48%">
+      <mat-label>Hora inicio</mat-label>
+      <input matInput type="time" formControlName="startTime">
+    </mat-form-field>
+
+    <!-- Fecha de fin -->
+    <mat-form-field appearance="fill" style="width:48%; margin-right:4%">
+      <mat-label>Fecha fin</mat-label>
+      <input matInput [matDatepicker]="endPicker" formControlName="endDate">
+      <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+      <mat-datepicker #endPicker startView="month" [startAt]="today"></mat-datepicker>
+    </mat-form-field>
+
+    <!-- Hora de fin -->
+    <mat-form-field appearance="fill" style="width:48%">
+      <mat-label>Hora fin</mat-label>
+      <input matInput type="time" formControlName="endTime">
+    </mat-form-field>
+
+    <!-- Duración calculada -->
+    <mat-form-field appearance="fill" style="width:100%">
+      <mat-label>Duración (horas)</mat-label>
+      <input matInput type="number" [value]="durationHours" readonly />
+    </mat-form-field>
+
+    <!-- Tipo de evento -->
+    <mat-form-field appearance="fill" style="width:100%">
+      <mat-label>Tipo</mat-label>
+      <mat-select formControlName="type">
+        <mat-option value="escolar">Escolar</mat-option>
+        <mat-option value="empresarial">Empresarial</mat-option>
+        <mat-option value="deportivo">Deportivo</mat-option>
+        <mat-option value="otros">Otros</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Áreas involucradas -->
+    <mat-form-field appearance="fill" style="width:100%">
+      <mat-label>Áreas involucradas</mat-label>
+      <mat-select formControlName="areas" multiple>
+        <mat-option *ngFor="let area of areas" [value]="area.documentId">{{ area.name }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Botón Guardar -->
+    <div class="button-container" style="margin-top:16px;">
+      <button mat-raised-button color="primary" type="submit">Guardar</button>
+    </div>
+
+  </form>
+</mat-card>

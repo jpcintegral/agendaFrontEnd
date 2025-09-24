@@ -1,0 +1,103 @@
+.event-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  padding: 16px;
+}
+
+.event-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* mantiene botones al fondo */
+  position: relative; /* para el badge */
+  transition: transform 0.2s, box-shadow 0.2s;
+  word-wrap: break-word;
+  min-height: 220px; /* asegura altura mínima para tarjetas cortas */
+  padding-bottom: 8px;
+}
+
+.event-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.event-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* asegura que el footer quede abajo */
+  position: relative; 
+  transition: transform 0.2s, box-shadow 0.2s;
+  word-wrap: break-word;
+  min-height: 220px; 
+}
+
+.card-content-wrapper {
+  flex: 1; /* ocupa todo el espacio disponible y empuja el footer abajo */
+}
+
+.order-badge {
+  position: absolute;
+  top: -3px;
+  right: -8px; /* sobresale un poco hacia afuera */
+  background-color: #1976d2; /* azul Material */
+  color: white;
+  font-weight: bold;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+.status-badge {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  color: white;
+}
+
+.status-approved { background-color: #4caf50; }
+.status-pending { background-color: #ff9800; }
+.status-rejected { background-color: #f44336; }
+.status-considered {  background-color: #2196f3; }
+
+
+.card-actions {
+  display: flex;
+  justify-content: flex-end; /* botones a la derecha */
+  gap: 8px;
+   flex-wrap: wrap;
+  padding: 8px 16px;
+}
+
+.left-actions button,
+.right-actions button {
+  min-width: 100px;
+  margin-top: 4px; /* un poco de espacio entre botones en móviles */
+}
+
+/* Media queries para móviles */
+@media (max-width: 600px) {
+  .event-grid {
+    grid-template-columns: 1fr; /* una tarjeta por fila */
+    padding: 8px;
+  }
+
+  .event-card mat-card-content p {
+    font-size: 1.1rem; /* texto más legible en móvil */
+    margin: 4px 0;
+  }
+
+  .card-actions {
+    flex-direction: column; /* botones uno debajo del otro */
+    gap: 8px;
+  }
+
+  .status-badge {
+    font-size: 0.7rem;
+    padding: 2px 6px;
+  }
+}

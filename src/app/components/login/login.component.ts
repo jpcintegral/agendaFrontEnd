@@ -1,0 +1,46 @@
+import { Component } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common'; // <<<<< IMPORTAR
+import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatCardModule } from '@angular/material/card';
+
+@Component({
+  selector: 'app-login',
+  templateUrl: './login.component.html',
+  standalone: true,
+  imports: [
+    CommonModule,           // <<<<< IMPORTAR
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatCardModule
+  ]
+})
+export class LoginComponent {
+  form: FormGroup;
+  error = '';
+
+  constructor(private fb: FormBuilder, private auth: AuthService, private router: Router) {
+    this.form = this.fb.group({
+      identifier: ['', Validators.required],
+      password: ['', Validators.required]
+    });
+  }
+
+  submit() {
+    if (!this.form.valid) return;
+    const { identifier, password } = this.form.value;
+    this.auth.login(identifier, password).subscribe({
+      next: (res: any) => {
+        this.auth.setToken(res.jwt);
+        this.router.navigate(['/events']);
+      },
+      error: err => (this.error = 'Usuario o contraseña incorrectos')
+    });
+  }
+}
