@@ -18,7 +18,6 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
   standalone: true,
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.css'],
-  encapsulation: ViewEncapsulation.None, 
   imports: [
    CommonModule,
     RouterModule,
@@ -42,7 +41,7 @@ export class MenuComponent {
   }
 
   logout() {
-    localStorage.removeItem('jwt');
+    localStorage.removeItem('token');
     this.router.navigate(['/login']);
   }
 

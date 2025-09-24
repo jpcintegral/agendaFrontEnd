@@ -34,7 +34,7 @@
 }
 
 
-.mdc-list-item__primary-text{color: #ffffff;}
+.sidenav .mdc-list-item__primary-text{color: #ffffff !important;}
 
 .toolbar-title {
   position: absolute;
