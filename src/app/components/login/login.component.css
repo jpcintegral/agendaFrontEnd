@@ -1,0 +1,106 @@
+/* Contenedor de fondo que ocupa toda la pantalla */
+.bg-hero {
+  position: fixed; /* fija al viewport */
+  inset: 0; /* top:0; right:0; bottom:0; left:0; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  z-index: 0;
+  background-color: #111; /* fallback color */
+}
+
+/* imagen de fondo (usa pseudo-elemento para evitar interferir con children) */
+.bg-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url('/assets/reuniones.jpg'); /* <-- ruta a tu imagen */
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  transform: translateZ(0); /* fuerza capa compuesta en algunos navegadores */
+  z-index: 0;
+  /* mejora performance: usa will-change con cuidado */
+}
+
+/* overlay oscuro semitransparente encima de la imagen */
+.bg-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-color: rgba(0, 0, 0, 0.719); /* capa oscura principal */
+  pointer-events: none;
+}
+
+/* capa con blur (glass effect) delante del overlay opcional */
+.bg-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  /* backdrop-filter aplica blur al fondo detrás de este pseudo elemento */
+  backdrop-filter: blur(6px) saturate(1.05);
+  -webkit-backdrop-filter: blur(6px) saturate(1.05);
+  /* cuando backdrop-filter no esté disponible, reducimos la opacidad del overlay */
+  background: rgba(7, 7, 7, 0.11); /* transparente por defecto */
+}
+
+/* Contenedor que centra el contenido y lo pone sobre las capas (sin ser afectado por backdrop) */
+.center-container {
+  position: relative;
+  z-index: 3; /* por encima de overlays */
+  width: 100%;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+/* tarjeta de login */
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 1.5rem;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.45);
+  background: rgba(255, 255, 255, 0.527); /* sutil/transparente para el efecto "glass" */
+  color: #fff;
+  backdrop-filter: none; /* no necesario para el card */
+  -webkit-backdrop-filter: none;
+}
+
+/* imagen logo cuadrada con bordes redondeados */
+.image-container { display:flex; justify-content:center; margin-bottom:1rem; }
+.logo-img {
+  width: 96px;
+  height: 96px;
+  border-radius: 14px;
+  object-fit: cover;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.507);
+  border: 2px solid rgba(255, 255, 255, 0);
+}
+
+/* inputs y botones */
+.full-width { width: 100%; margin-bottom: 0.9rem; }
+.button-container { margin-top: 0.6rem; display:flex; justify-content:center; }
+
+/* texto de error */
+.error-msg { color: #c23434; margin-top:0.75rem; font-weight: bold; font-size: 15px; }
+
+/* --- RESPONSIVE --- */
+@media (max-width: 600px) {
+  .logo-img { width: 72px; height: 72px; border-radius: 10px; }
+  .login-card { max-width: 92%; padding: 1rem; border-radius: 10px; }
+  .bg-hero::after { backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+}
+
+/* --- Fallback para navegadores sin backdrop-filter:
+   Les reducimos opacidad en overlay para simular el efecto */
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .bg-hero::after { background: rgba(0,0,0,0.18); }
+  .login-card { background: rgba(255,255,255,0.06); }
+}

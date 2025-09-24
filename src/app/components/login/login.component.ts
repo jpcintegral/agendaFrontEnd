@@ -11,9 +11,10 @@ import { MatCardModule } from '@angular/material/card';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
+  styleUrl: './login.component.css',
   standalone: true,
   imports: [
-    CommonModule,           // <<<<< IMPORTAR
+    CommonModule,           
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,

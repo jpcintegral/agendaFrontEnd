@@ -1,19 +1,32 @@
-<mat-card class="container">
-  <form [formGroup]="form" (ngSubmit)="submit()" class="form-container">
-    <mat-form-field appearance="fill" style="width:100%">
-      <mat-label>Usuario</mat-label>
-      <input matInput formControlName="identifier" />
-    </mat-form-field>
+<!-- Coloca esto como contenedor raíz (ej. en app.component.html o login) -->
+<div class="bg-hero">
+  <!-- capa blur (usa backdrop-filter sobre un pseudo elemento o elemento real) -->
+  <div class="bg-overlay"></div>
 
-    <mat-form-field appearance="fill" style="width:100%">
-      <mat-label>Contraseña</mat-label>
-      <input matInput type="password" formControlName="password" />
-    </mat-form-field>
+  <!-- contenido centrado (tu tarjeta de login u otro) -->
+  <div class="center-container">
+    <mat-card class="login-card">
+      <div class="image-container">
+        <img src="assets/logo.png" alt="Logo" class="logo-img" />
+      </div>
 
-    <div class="button-container">
-      <button mat-raised-button color="primary" type="submit">Login</button>
-    </div>
-  </form>
+      <form [formGroup]="form" (ngSubmit)="submit()" class="form-container">
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Usuario</mat-label>
+          <input matInput formControlName="identifier" />
+        </mat-form-field>
 
-  <div *ngIf="error" style="color:red;margin-top:10px">{{ error }}</div>
-</mat-card>
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Contraseña</mat-label>
+          <input matInput type="password" formControlName="password" />
+        </mat-form-field>
+
+        <div class="button-container">
+          <button mat-raised-button color="primary" type="submit">Login</button>
+        </div>
+      </form>
+
+      <div *ngIf="error" class="error-msg">{{ error }}</div>
+    </mat-card>
+  </div>
+</div>
