@@ -1,0 +1,17 @@
+mat-card {
+  background-color: #f9f9f9;
+}
+
+mat-card-title {
+  font-weight: bold;
+  color: #024959;
+}
+
+mat-card-subtitle {
+  font-size: 13px;
+  color: #555;
+}
+
+mat-card-content p {
+  margin: 4px 0;
+}

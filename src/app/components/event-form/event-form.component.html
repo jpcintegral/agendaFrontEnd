@@ -13,33 +13,34 @@
       <textarea matInput formControlName="description"></textarea>
     </mat-form-field>
 
-    <!-- Fecha de inicio -->
-    <mat-form-field appearance="fill" style="width:48%; margin-right:4%">
-      <mat-label>Fecha inicio</mat-label>
-      <input matInput [matDatepicker]="startPicker" formControlName="startDate">
-      <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
-      <mat-datepicker #startPicker startView="month" [startAt]="today"></mat-datepicker>
-    </mat-form-field>
-
+ <!-- Fecha de inicio -->
+<mat-form-field appearance="fill" style="width:48%; margin-right:4%">
+  <mat-label>Fecha inicio</mat-label>
+  <input matInput [matDatepicker]="startPicker" formControlName="startDate" (dateChange)="updateDuration()" />
+  <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+  <mat-datepicker #startPicker startView="month" [startAt]="today"></mat-datepicker>
+</mat-form-field>
     <!-- Hora de inicio -->
-    <mat-form-field appearance="fill" style="width:48%">
-      <mat-label>Hora inicio</mat-label>
-      <input matInput type="time" formControlName="startTime">
-    </mat-form-field>
+<mat-form-field appearance="fill" style="width:48%">
+  <mat-label>Hora inicio</mat-label>
+  <input matInput type="time" formControlName="startTime" (input)="updateDuration()" />
+</mat-form-field>
 
-    <!-- Fecha de fin -->
-    <mat-form-field appearance="fill" style="width:48%; margin-right:4%">
-      <mat-label>Fecha fin</mat-label>
-      <input matInput [matDatepicker]="endPicker" formControlName="endDate">
-      <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
-      <mat-datepicker #endPicker startView="month" [startAt]="today"></mat-datepicker>
-    </mat-form-field>
+<!-- Hora de fin -->
+<mat-form-field appearance="fill" style="width:48%">
+  <mat-label>Hora fin</mat-label>
+  <input matInput type="time" formControlName="endTime" (input)="updateDuration()" />
+</mat-form-field>
 
-    <!-- Hora de fin -->
-    <mat-form-field appearance="fill" style="width:48%">
-      <mat-label>Hora fin</mat-label>
-      <input matInput type="time" formControlName="endTime">
-    </mat-form-field>
+
+
+<!-- Fecha de fin -->
+<mat-form-field appearance="fill" style="width:48%">
+  <mat-label>Fecha fin</mat-label>
+  <input matInput [matDatepicker]="endPicker" formControlName="endDate" (dateChange)="updateDuration()" />
+  <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+  <mat-datepicker #endPicker startView="month" [startAt]="today"></mat-datepicker>
+</mat-form-field>
 
     <!-- Duración calculada -->
     <mat-form-field appearance="fill" style="width:100%">
@@ -65,11 +66,41 @@
         <mat-option *ngFor="let area of areas" [value]="area.documentId">{{ area.name }}</mat-option>
       </mat-select>
     </mat-form-field>
+    <!-- Presupuesto -->
+    <mat-form-field appearance="fill" style="width:100%">
+      <mat-label>¿Necesita presupuesto?</mat-label>
+      <mat-select formControlName="needsBudget">
+        <mat-option value="no">No</mat-option>
+        <mat-option value="si">Sí</mat-option>
+      </mat-select>
+    </mat-form-field>
 
-    <!-- Botón Guardar -->
-    <div class="button-container" style="margin-top:16px;">
-      <button mat-raised-button color="primary" type="submit">Guardar</button>
+    <!-- Campo de presupuesto (solo visible si se selecciona "sí") -->
+    <mat-form-field appearance="fill" style="width:100%" *ngIf="form.value.needsBudget === 'si'">
+      <mat-label>Monto estimado</mat-label>
+      <input matInput type="number" formControlName="estimatedBudget" />
+    </mat-form-field>
+
+    <!-- Botón Guardar con loader -->
+    <div class="button-container" style="margin-top:16px; display:flex; align-items:center; gap:12px;">
+      <button mat-raised-button color="warn" type="button" *ngIf="eventosConflicto.length > 0"
+        (click)="abrirConflictosModal()">
+        Ver eventos en conflicto
+      </button>
+      <button mat-raised-button color="primary" type="submit" [disabled]="loading || !form.valid">
+        {{ event?.id ? 'Actualizar' : 'Guardar' }}
+      </button>
+       
+
+      <!-- Spinner -->
+      <mat-progress-spinner *ngIf="loading"
+        diameter="28"
+        mode="indeterminate"
+        color="primary">
+      </mat-progress-spinner>
     </div>
+
+
 
   </form>
 </mat-card>

@@ -1,0 +1,26 @@
+<h2 mat-dialog-title>
+  {{ isConflict ? 'Eventos en Conflicto' : 'Detalle del Evento' }}
+</h2>
+
+<mat-dialog-content>
+  <mat-card *ngFor="let evento of eventos" style="margin-bottom: 16px;">
+    <mat-card-title>{{ evento.title }}</mat-card-title>
+    <mat-card-subtitle>
+      Tipo: {{ evento.type | titlecase }} | 
+      Duración: {{ evento.durationHours }} h | 
+      Estado: {{ evento.status | uppercase }}
+    </mat-card-subtitle>
+    <mat-divider></mat-divider>
+    <mat-card-content>
+      <p><strong>Descripción:</strong> {{ evento.description || 'Sin descripción' }}</p>
+      <p><strong>Fecha inicio:</strong> {{ evento.startDateTime | date:'short' }}</p>
+      <p><strong>Fecha fin:</strong> {{ evento.endDateTime | date:'short' }}</p>
+      <p *ngIf="evento.needsBudget"><strong>Presupuesto requerido:</strong> Sí</p>
+      <p *ngIf="evento.estimatedBudget"><strong>Estimado:</strong> {{ evento.estimatedBudget | currency:'MXN':'symbol':'1.0-0' }}</p>
+    </mat-card-content>
+  </mat-card>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cerrar()">Cerrar</button>
+</mat-dialog-actions>

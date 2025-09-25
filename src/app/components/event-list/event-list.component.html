@@ -15,23 +15,36 @@
       <mat-card-title>{{ event.title }}</mat-card-title>
       <mat-card-subtitle>
         <span class="status-badge">{{ event.status | uppercase }}</span>
+         <!-- Nuevo: indicador si necesita presupuesto -->
+        
       </mat-card-subtitle>
          
     </mat-card-header>
      <hr class="divider" />
      
     <mat-card-content class="card-content-wrapper">
+      <span *ngIf="event.needsBudget || event.estimatedBudget" class="budget-badge">
+      <ng-container *ngIf="event.needsBudget">Requiere Presupuesto</ng-container>
+      <ng-container *ngIf="event.needsBudget && event.estimatedBudget"> | </ng-container>
+      <ng-container *ngIf="event.estimatedBudget">
+        Estimado: {{ event.estimatedBudget | currency:'MXN':'symbol':'1.0-0' }}
+      </ng-container>
+    </span>
+
       <p class="description">{{ event.description }}</p>
-      <p><strong>Inicio:</strong> {{ event.startDateTime | date:'short' }}</p>
-      <p><strong>Fin:</strong> {{ event.endDateTime | date:'short' }}</p>
-      <p><strong>Duración:</strong> {{ event.durationHours }} hrs</p>
+       <p>        
+        <strong> Inicio: </strong> {{ event.startDateTime | date:'dd/MM/yyyy HH:mm' }} <mat-icon class="inline-icon">calendar_today</mat-icon> </p>
+      <p>
+        <strong>Fin:</strong> {{ event.endDateTime | date:'dd/MM/yyyy HH:mm' }} <mat-icon class="inline-icon">calendar_today</mat-icon></p>
+      <p>
+        <strong>Duración:</strong> {{ event.durationHours }} hrs<mat-icon class="inline-icon">schedule</mat-icon> </p>
     </mat-card-content>
 
-    <mat-card-actions class="card-actions">
+
      <mat-card-actions class="card-actions">
   <mat-form-field appearance="fill" style="width: 100%;">
     <mat-label>Acción</mat-label>
-    <mat-select (selectionChange)="onStatusChange(event, $event.value)">
+    <mat-select (selectionChange)="onStatusChange(event, $event)" >
       <!-- Opción Ver -->
       <mat-option *ngIf="userRole === 'secretaria' || userRole === 'presidente' || isUserAssigned(event)" [value]="'ver'">
         <mat-icon>visibility</mat-icon> Ver
@@ -55,7 +68,7 @@
   </mat-form-field>
 </mat-card-actions>
 
-    </mat-card-actions>
+   
 
   </mat-card>
 </div>

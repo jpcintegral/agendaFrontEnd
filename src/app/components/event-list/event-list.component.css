@@ -55,11 +55,23 @@
   box-shadow: 0 5px 15px rgba(0,0,0,0.15);
   transition: transform 0.1s, box-shadow 0.2s;
   background-color: #f9f9f9;
+  
+  height: 100%; /* asegura altura consistente */
 }
 
 .event-card:hover {
  
   box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+}
+
+.description {
+  max-height: 150px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  color: #555;
 }
 
 
@@ -100,6 +112,7 @@
   gap: 10px;
   padding: 12px;
   justify-content: flex-end;
+  margin-top: auto;
 }
 
 .card-actions button {
@@ -151,4 +164,29 @@ mat-card-header {
   background-color: rgba(53, 53, 53, 0.2);
   margin: 0px;
    width: 99%;;
+}
+
+
+
+.budget-badge {
+  background: #d32f2f;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  margin-right: 6px;
+}
+
+.budget-amount {
+  background: #388e3c;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.inline-icon {
+  vertical-align: middle;
+  margin-right: 4px; /* separación entre icono y texto */
+  font-size: 18px; /* ajusta tamaño si es necesario */
 }

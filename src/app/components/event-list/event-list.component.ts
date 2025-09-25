@@ -9,6 +9,9 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatDialog } from '@angular/material/dialog';
+import { DetalleEventoComponent, DetalleEventoData } from '../detalle-evento/detalle-evento.component';
+import { MatSelect } from '@angular/material/select';
 
 
 type EventStatus = 'aprobado' | 'considerando' | 'pendiente' | 'rechazado';
@@ -32,7 +35,8 @@ interface ApproveEventResponse {
     MatSnackBarModule,
     MatIconModule,
     MatSelectModule,
-    MatFormFieldModule
+    MatFormFieldModule,
+    
   ]
 })
 export class EventListComponent implements OnInit {
@@ -42,7 +46,7 @@ export class EventListComponent implements OnInit {
   currentUserId = 5; // ejemplo
   selectedStatus: EventStatus | 'todos' = 'todos';
   filterStatus: 'all' | 'aprobado' | 'considerando' | 'pendiente' | 'rechazado' = 'all';
-
+  
   
 
 
@@ -54,7 +58,7 @@ export class EventListComponent implements OnInit {
     rechazado: 0
   };
 
-  constructor(private eventService: EventService, private realtime: RealtimeService,private snackBar: MatSnackBar ) {}
+  constructor(private eventService: EventService, private realtime: RealtimeService,private snackBar: MatSnackBar, private dialog : MatDialog ) {}
 
   ngOnInit() {
     this.loadEvents();
@@ -189,13 +193,18 @@ approveEvent(event: any) {
     return this.events.filter(e => e.status === status).length;
   }
 
-  onStatusChange(event: any, action: string) {
-  switch (action) {
+  onStatusChange(evento: any, action: any) {
+ const value = action.value;
+  const select: MatSelect = action.source; // este es el mat-select que disparó el evento
+
+ 
+  switch (value) {
     case 'ver':
-      //this.viewEvent(event);
+      this.detalleEvento(evento,select);
       break;
     case 'aprobar':
-      //this.approveEvent(event);
+      this.approveEvent(evento);
+       select.writeValue(null);
       break;
     case 'cancelar':
       //this.cancelEvent(event);
@@ -205,5 +214,18 @@ approveEvent(event: any) {
       break;
   }
 }
+
+ detalleEvento(evento : any, elemento : any ){
+  // Abrir detalle de un evento individual
+ const dialogref=  this.dialog.open(DetalleEventoComponent, {
+    width: '600px',
+    data: { eventos: evento, isConflict: false } as DetalleEventoData
+  });
+
+  dialogref.afterClosed().subscribe(() => {
+    // Reinicia el mat-select al cerrar el modal
+   elemento.writeValue(null);
+  });
+ }
 
 }

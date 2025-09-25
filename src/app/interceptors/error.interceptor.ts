@@ -39,7 +39,7 @@ export class ErrorInterceptor implements HttpInterceptor {
           msg = error.statusText;
         }
 
-        alert(msg);
+       // alert(msg);
         return throwError(() => error);
       })
     );
