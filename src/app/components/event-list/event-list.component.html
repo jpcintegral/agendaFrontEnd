@@ -1,9 +1,9 @@
 <mat-tab-group class="custom-tab-group" (selectedIndexChange)="onTabChange($event)">
-  <mat-tab label="Todos ({{ events.length }})" (click)="filterStatus='all'; applyFilter()"></mat-tab>
-  <mat-tab label="Aprobados ({{ countByStatus('aprobado') }})" (click)="filterStatus='aprobado'; applyFilter()"></mat-tab>
-  <mat-tab label="Considerados ({{ countByStatus('considerando') }})" (click)="filterStatus='considerando'; applyFilter()"></mat-tab>
-  <mat-tab label="Pendientes ({{ countByStatus('pendiente') }})" (click)="filterStatus='pendiente'; applyFilter()"></mat-tab>
-  <mat-tab label="Rechazados ({{ countByStatus('rechazado') }})" (click)="filterStatus='rechazado'; applyFilter()"></mat-tab>
+   <mat-tab label="Aprobados ({{ countByStatus('aprobado') }})" (click)="filterStatus='aprobado'; applyFilter()"></mat-tab>
+   <mat-tab label="Pendientes ({{ countByStatus('pendiente') }})" (click)="filterStatus='pendiente'; applyFilter()"></mat-tab>
+     <mat-tab label="Considerados ({{ countByStatus('considerando') }})" (click)="filterStatus='considerando'; applyFilter()"></mat-tab>
+  <mat-tab label="Todos ({{ events.length }})" (click)="filterStatus='all'; applyFilter()"></mat-tab>   
+  <mat-tab label="Cancelados ({{ countByStatus('cancelado') }})" (click)="filterStatus='cancelado'; applyFilter()"></mat-tab>
 </mat-tab-group>
 
 <div class="event-grid">
@@ -55,8 +55,13 @@
         <mat-icon>check_circle</mat-icon> Aprobar
       </mat-option>
 
+       <mat-option *ngIf="userRole === 'presidente' && (event.status === 'pendiente' || event.status === 'considerando')" [value]="'considerando'">
+        <mat-icon>check_circle</mat-icon> Considerando
+      </mat-option>
+      
+      
       <!-- Opción Cancelar -->
-      <mat-option *ngIf="(userRole === 'presidente' || userRole === 'secretaria') && (event.status !== 'pendiente' && event.status !== 'rechazado')" [value]="'cancelar'">
+      <mat-option *ngIf="(userRole === 'presidente' || userRole === 'secretaria') && (event.status !== 'pendiente' && event.status !== 'cancelado')" [value]="'cancelar'">
         <mat-icon>cancel</mat-icon> Cancelar
       </mat-option>
 

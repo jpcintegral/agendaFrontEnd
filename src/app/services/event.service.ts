@@ -27,12 +27,16 @@ export class EventService {
     return this.http.post(this.baseUrl, { data: payload }, this.getHeaders());
   }
 
-  updateEvent(id: number, payload: any) {
-    return this.http.put(`${this.baseUrl}/${id}`, { data: payload }, this.getHeaders());
+  updateEvent(documentId: string, data: any) {
+    return this.http.put(`${this.baseUrl}/${documentId}`, { data });
   }
 
-  approveEvent(id: number) {
-    return this.http.post(`${this.baseUrl}/${id}/approve`, {}, this.getHeaders());
+   deleteEvent(documentId : string){
+     return  this.http.delete(`${this.baseUrl}/${documentId}`,this.getHeaders());
+   }
+
+  approveEvent(documentId: string) {
+    return this.http.post(`${this.baseUrl}/${documentId}/approve`, {}, this.getHeaders());
   }
 
   getAreas() {

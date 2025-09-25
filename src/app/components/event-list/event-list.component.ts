@@ -14,7 +14,7 @@ import { DetalleEventoComponent, DetalleEventoData } from '../detalle-evento/det
 import { MatSelect } from '@angular/material/select';
 
 
-type EventStatus = 'aprobado' | 'considerando' | 'pendiente' | 'rechazado';
+type EventStatus = 'aprobado' | 'considerando' | 'pendiente' | 'cancelado';
 
 interface ApproveEventResponse {
   result: 'approved' | 'conflict' | string;
@@ -45,8 +45,8 @@ export class EventListComponent implements OnInit {
   userRole = 'presidente'; // o 'presidente', dinámico según sesión
   currentUserId = 5; // ejemplo
   selectedStatus: EventStatus | 'todos' = 'todos';
-  filterStatus: 'all' | 'aprobado' | 'considerando' | 'pendiente' | 'rechazado' = 'all';
-  
+  filterStatus: 'all' | 'aprobado' | 'considerando' | 'pendiente' | 'cancelado' = 'all';
+  eventosConflicto: any[] = []
   
 
 
@@ -55,7 +55,7 @@ export class EventListComponent implements OnInit {
     aprobado: 0,
     considerando: 0,
     pendiente: 0,
-    rechazado: 0
+    cancelado: 0
   };
 
   constructor(private eventService: EventService, private realtime: RealtimeService,private snackBar: MatSnackBar, private dialog : MatDialog ) {}
@@ -68,6 +68,7 @@ export class EventListComponent implements OnInit {
     this.realtime.joinRoom('secretarias');
     this.realtime.onEventApproved().subscribe(event => this.loadEvents());
     this.realtime.onEventConsidered().subscribe(event => this.loadEvents());
+    this.onTabChange(0);
   }
 
   loadEvents() {
@@ -75,7 +76,7 @@ export class EventListComponent implements OnInit {
       this.events = res.data || [];
 
       // Inicializar contadores
-      this.statusCounts = { aprobado: 0, considerando: 0, pendiente: 0, rechazado: 0 };
+      this.statusCounts = { aprobado: 0, considerando: 0, pendiente: 0, cancelado: 0 };
 
       // Incrementar contadores
       this.events.forEach(event => {
@@ -86,7 +87,7 @@ export class EventListComponent implements OnInit {
       });
 
       // Ordenar: por estado primero, luego por fecha
-      const statusOrder: EventStatus[] = ['aprobado', 'considerando', 'pendiente', 'rechazado'];
+      const statusOrder: EventStatus[] = ['aprobado', 'considerando', 'pendiente', 'cancelado'];
       this.events.sort((a, b) => {
         const statusDiff = statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status);
         if (statusDiff !== 0) return statusDiff;
@@ -127,7 +128,7 @@ updateOrderBadges() {
   }
 
 approveEvent(event: any) {
-  this.eventService.approveEvent(event.id).subscribe({
+  this.eventService.approveEvent(event.documentId).subscribe({
     next: (res: any) => {
       // Si la aprobación fue exitosa (200 OK)
       const msg = res?.message || 'Evento aprobado correctamente';
@@ -140,14 +141,14 @@ approveEvent(event: any) {
       const errorDetails = err.error?.error?.details;
       if (errorDetails?.result === 'conflict') {
         const conflictMsg = err.error?.error?.message || 'Conflicto de horarios con otro evento aprobado';
-        this.snackBar.open(`⚠️ ${conflictMsg}`, 'Ver detalles', { duration: 5000 });
+        this.snackBar.open(` ${conflictMsg}`, 'Ver detalles', { duration: 5000 });
 
         // Mostrar en consola los eventos que causan conflicto
         console.log('Eventos en conflicto:', errorDetails.conflicts);
 
         // Si quieres, también puedes mostrar en pantalla los detalles resumidos
-        const conflictTitles = errorDetails.conflicts.map((c: any) => `• ${c.title} (${new Date(c.startDateTime).toLocaleString()})`).join('\n');
-        alert(`Conflictos detectados:\n${conflictTitles}`);
+        this.eventosConflicto = errorDetails.conflicts;
+       this.abrirConflictosModal();
       } else {
         // Otros errores genéricos
         const msg = err.error?.error?.message || 'Ocurrió un error al aprobar el evento';
@@ -157,6 +158,64 @@ approveEvent(event: any) {
   });
 }
 
+private cancelEvent(idEvent: string) {
+  if (!idEvent) return;
+
+  if (confirm('¿Seguro que deseas cancelar este evento?')) {
+    this.eventService.updateEvent(idEvent, { status: 'cancelado' }).subscribe({
+      next: (res: any) => {
+        console.log('Evento cancelado:', res);
+        this.snackBar.open('Evento cancelado con éxito', 'Cerrar', { duration: 3000 });
+
+        // Refrescar lista de eventos
+        this.loadEvents();
+      },
+      error: err => {
+        console.error('Error al cancelar evento:', err);
+        this.snackBar.open('Ocurrió un error al cancelar el evento', 'Cerrar', { duration: 3000 });
+      }
+    });
+  }
+}
+
+private considerarEvent(idEvent: string) {
+  if (!idEvent) return;
+
+  if (confirm('¿Seguro que deseas considerar este evento?')) {
+    this.eventService.updateEvent(idEvent, { status: 'considerando' }).subscribe({
+      next: (res: any) => {
+        console.log('Evento actualizado:', res);
+        this.snackBar.open('Evento actualizado con éxito', 'Cerrar', { duration: 3000 });
+
+        // Refrescar lista de eventos
+        this.loadEvents();
+      },
+      error: err => {
+        console.error('Error al cancelar evento:', err);
+        this.snackBar.open('Ocurrió un error al cancelar el evento', 'Cerrar', { duration: 3000 });
+      }
+    });
+  }
+}
+
+ 
+private deleteEvent(idEvent: string) {
+  if (!idEvent) return;
+
+  if (confirm('¿Seguro que deseas eliminar este evento?')) {
+    this.eventService.deleteEvent(idEvent).subscribe({
+      next: (res: any) => {
+        console.log('Evento eliminado:', res);
+        this.snackBar.open('Evento eliminado con éxito', 'Cerrar', { duration: 3000 });
+        this.loadEvents();
+      },
+      error: err => {
+        console.error('Error al eliminar evento:', err);
+        this.snackBar.open('Ocurrió un error al eliminar el evento', 'Cerrar', { duration: 3000 });
+      }
+    });
+  }
+}
 
 
   getStatusClass(status: EventStatus): string {
@@ -164,21 +223,22 @@ approveEvent(event: any) {
       case 'aprobado': return 'status-approved';
       case 'considerando': return 'status-considered';
       case 'pendiente': return 'status-pending';
-      case 'rechazado': return 'status-rejected';
+      case 'cancelado': return 'status-rejected';
       default: return '';
     }
   }
 
   onTabChange(index: number) {
   switch(index) {
-    case 0: this.selectedStatus = 'todos'; break;
-    case 1: this.selectedStatus = 'aprobado'; break;
+    case 0: this.selectedStatus = 'aprobado'; break;
+    case 1: this.selectedStatus = 'pendiente'; break;
     case 2: this.selectedStatus = 'considerando'; break;
-    case 3: this.selectedStatus = 'pendiente'; break;
-    case 4: this.selectedStatus = 'rechazado'; break;
+    case 3: this.selectedStatus = 'todos'; break;
+    case 4: this.selectedStatus = 'cancelado'; break;
   }
   this.filterEvents();
 }
+
 
   applyFilter() {
     if (this.filterStatus === 'all') {
@@ -206,11 +266,17 @@ approveEvent(event: any) {
       this.approveEvent(evento);
        select.writeValue(null);
       break;
+     case 'considerando':
+      this.considerarEvent(evento.documentId);
+       select.writeValue(null);
+      break;
     case 'cancelar':
-      //this.cancelEvent(event);
+      this.cancelEvent(evento.documentId);
+       select.writeValue(null)
       break;
     case 'eliminar':
-      //this.deleteEvent(event);
+      this.deleteEvent(evento.documentId);
+       select.writeValue(null);
       break;
   }
 }
@@ -227,5 +293,15 @@ approveEvent(event: any) {
    elemento.writeValue(null);
   });
  }
+
+  abrirConflictosModal(){
+     console.log("llamar modal")
+    if (this.eventosConflicto.length > 0) {
+  this.dialog.open(DetalleEventoComponent, {
+    width: '700px',
+    data: { eventos: this.eventosConflicto, isConflict: true } as DetalleEventoData
+  });
+}
+  }
 
 }
