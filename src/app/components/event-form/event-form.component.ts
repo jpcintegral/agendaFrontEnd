@@ -14,6 +14,7 @@ import { Router } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { DetalleEventoComponent, DetalleEventoData } from '../detalle-evento/detalle-evento.component';
+import { MatIconModule } from '@angular/material/icon';
 
 
 
@@ -32,7 +33,8 @@ import { DetalleEventoComponent, DetalleEventoData } from '../detalle-evento/det
     MatDatepickerModule,
     MatNativeDateModule,
     MatProgressSpinnerModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatIconModule
   ]
 })
 export class EventFormComponent implements OnInit {
@@ -43,10 +45,17 @@ export class EventFormComponent implements OnInit {
   durationHours = 1;
   loading = false; 
   eventosConflicto: any[] =[];
+  userRol: any = localStorage.getItem('rolUserAgenda');
 
-  constructor(private fb: FormBuilder, private eventService: EventService, private router: Router,private snackBar: MatSnackBar, private dialog : MatDialog ) {}
-
+  constructor(private fb: FormBuilder, private eventService: EventService, private router: Router,private snackBar: MatSnackBar, private dialog : MatDialog ) {
+  
+  }
+ 
+  
+   
+  
   ngOnInit() {
+    
     const startDateObj = this.event?.startDateTime ? new Date(this.event.startDateTime) : null;
     const endDateObj = this.event?.endDateTime ? new Date(this.event.endDateTime) : null;
 
@@ -76,6 +85,8 @@ export class EventFormComponent implements OnInit {
       }
       budgetCtrl?.updateValueAndValidity();
     });
+
+
 
     this.eventService.getAreas().subscribe((res: any) => {
       this.areas = res.data.map((a: any) => ({ id: a.id, name: a.name, documentId: a.documentId }));
@@ -121,8 +132,6 @@ export class EventFormComponent implements OnInit {
    
     const start = this.combineDateTime(this.form.value.startDate, this.form.value.startTime);
     const end = this.combineDateTime(this.form.value.endDate, this.form.value.endTime);
-     console.log("start",start)
-     console.log("end",end)
     if (start && end && end > start) {
       this.durationHours = +((end.getTime() - start.getTime()) / (1000 * 60 * 60)).toFixed(2);
     } else {

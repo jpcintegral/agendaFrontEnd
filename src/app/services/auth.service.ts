@@ -14,22 +14,27 @@ export class AuthService {
     return this.http.post(this.baseUrl, { identifier, password });
   }
 
+  
   setToken(token: string) {
-    localStorage.setItem('token', token);
+    localStorage.setItem('tokenAgenda', token);
   }
 
   getToken() {
-    return localStorage.getItem('token');
+    return localStorage.getItem('tokenAgenda');
   }
 
   getUserRole() {
-    const token = this.getToken();
-    if (!token) return null;
-    const decoded: any = jwtDecode(token);
-    return decoded.role || null;
+   return this.http.get(`${environment.urlBackend}/api/users/me?populate=*`);
   }
 
+
+  setRolUser( rol:string){
+    return localStorage.setItem('rolUserAgenda',rol);
+  }
+
+  
+
   logout() {
-    localStorage.removeItem('token');
+    localStorage.removeItem('tokenAgenda');
   }
 }

@@ -40,6 +40,10 @@ export class LoginComponent {
       next: (res: any) => {
         this.auth.setToken(res.jwt);
         this.router.navigate(['/events']);
+        this.auth.getUserRole().subscribe((res: any) => {
+        this.auth.setRolUser(res.role.name);
+         
+     });
       },
       error: err => (this.error = 'Usuario o contraseña incorrectos')
     });

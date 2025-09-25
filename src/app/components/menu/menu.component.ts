@@ -41,7 +41,8 @@ export class MenuComponent {
   }
 
   logout() {
-    localStorage.removeItem('token');
+    localStorage.removeItem('tokenAgenda');
+    localStorage.removeItem('rolUserAgenda');
     this.router.navigate(['/login']);
   }
 

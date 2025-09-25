@@ -9,7 +9,7 @@ export class AuthGuard implements CanActivate {
   private router = inject(Router);
 
   canActivate(): boolean | UrlTree | Observable<boolean | UrlTree> | Promise<boolean | UrlTree> {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('tokenAgenda');
 
     if (token) {
       // Podrías validar expiración del token aquí si quieres
