@@ -1,9 +1,9 @@
 <mat-tab-group class="custom-tab-group" (selectedIndexChange)="onTabChange($event)">
    <mat-tab label="Aprobados ({{ countByStatus('aprobado') }})" (click)="filterStatus='aprobado'; applyFilter()"></mat-tab>
    <mat-tab label="Pendientes ({{ countByStatus('pendiente') }})" (click)="filterStatus='pendiente'; applyFilter()"></mat-tab>
-     <mat-tab label="Considerados ({{ countByStatus('considerando') }})" (click)="filterStatus='considerando'; applyFilter()"></mat-tab>
-  <mat-tab label="Todos ({{ events.length }})" (click)="filterStatus='all'; applyFilter()"></mat-tab>   
-  <mat-tab label="Cancelados ({{ countByStatus('cancelado') }})" (click)="filterStatus='cancelado'; applyFilter()"></mat-tab>
+   <mat-tab label="Considerados ({{ countByStatus('considerando') }})" (click)="filterStatus='considerando'; applyFilter()"></mat-tab>
+   <mat-tab label="Todos ({{ events.length }})" (click)="filterStatus='all'; applyFilter()"></mat-tab>   
+   <mat-tab label="Cancelados ({{ countByStatus('cancelado') }})" (click)="filterStatus='cancelado'; applyFilter()"></mat-tab>
 </mat-tab-group>
 
 <div class="event-grid">
@@ -11,69 +11,94 @@
     
     <div class="order-badge">{{ event.order }}</div>
 
-    <mat-card-header >
-      <mat-card-title>{{ event.title }}</mat-card-title>
-      <mat-card-subtitle>
-        <span class="status-badge">{{ event.status | uppercase }}</span>
-         <!-- Nuevo: indicador si necesita presupuesto -->
-        
-      </mat-card-subtitle>
-         
-    </mat-card-header>
-     <hr class="divider" />
-     
-    <mat-card-content class="card-content-wrapper">
-      <span *ngIf="event.needsBudget || event.estimatedBudget" class="budget-badge">
-      <ng-container *ngIf="event.needsBudget">Requiere Presupuesto</ng-container>
-      <ng-container *ngIf="event.needsBudget && event.estimatedBudget"> | </ng-container>
-      <ng-container *ngIf="event.estimatedBudget">
-        Estimado: {{ event.estimatedBudget | currency:'MXN':'symbol':'1.0-0' }}
-      </ng-container>
-    </span>
+    <!-- Tarjeta especial para eventos privados -->
+    <ng-container *ngIf="event.type === 'privado' && userRole !== 'Presidente'; else normalCard">
+      <mat-card-header>
+        <mat-card-title>Evento Privado 🔒</mat-card-title>
+        <mat-card-subtitle>
+          <span class="status-badge">{{ event.status | uppercase }}</span>
+        </mat-card-subtitle>
+      </mat-card-header>
+      <hr class="divider" />
+      <mat-card-content class="card-content-wrapper private-card">
+        <p>Este evento es privado.</p>
+        <p>
+          <strong>Inicio:</strong> {{ event.startDateTime | date:'dd/MM/yyyy HH:mm' }} 
+          <mat-icon class="inline-icon">calendar_today</mat-icon>
+        </p>
+        <p>
+          <strong>Fin:</strong> {{ event.endDateTime | date:'dd/MM/yyyy HH:mm' }} 
+          <mat-icon class="inline-icon">calendar_today</mat-icon>
+        </p>
+      </mat-card-content>
+    </ng-container>
 
-      <p class="description">{{ event.description }}</p>
-       <p>        
-        <strong> Inicio: </strong> {{ event.startDateTime | date:'dd/MM/yyyy HH:mm' }} <mat-icon class="inline-icon">calendar_today</mat-icon> </p>
-      <p>
-        <strong>Fin:</strong> {{ event.endDateTime | date:'dd/MM/yyyy HH:mm' }} <mat-icon class="inline-icon">calendar_today</mat-icon></p>
-      <p>
-        <strong>Duración:</strong> {{ event.durationHours }} hrs<mat-icon class="inline-icon">schedule</mat-icon> </p>
-    </mat-card-content>
+    <!-- Tarjeta normal -->
+    <ng-template #normalCard>
+      <mat-card-header>
+        <mat-card-title>{{ event.title }}</mat-card-title>
+        <mat-card-subtitle>
+          <span class="status-badge">{{ event.status | uppercase }}</span>
+        </mat-card-subtitle>
+      </mat-card-header>
+      <hr class="divider" />
+      <mat-card-content class="card-content-wrapper">
+        <span *ngIf="event.needsBudget || event.estimatedBudget" class="budget-badge">
+          <ng-container *ngIf="event.needsBudget">Requiere Presupuesto</ng-container>
+          <ng-container *ngIf="event.needsBudget && event.estimatedBudget"> | </ng-container>
+          <ng-container *ngIf="event.estimatedBudget">
+            Estimado: {{ event.estimatedBudget | currency:'MXN':'symbol':'1.0-0' }}
+          </ng-container>
+        </span>
+        <p class="description">{{ event.description }}</p>
+        <p>
+          <strong>Inicio:</strong> {{ event.startDateTime | date:'dd/MM/yyyy HH:mm' }} 
+          <mat-icon class="inline-icon">calendar_today</mat-icon>
+        </p>
+        <p>
+          <strong>Fin:</strong> {{ event.endDateTime | date:'dd/MM/yyyy HH:mm' }} 
+          <mat-icon class="inline-icon">calendar_today</mat-icon>
+        </p>
+        <p>
+          <strong>Duración:</strong> {{ event.durationHours }} hrs
+          <mat-icon class="inline-icon">schedule</mat-icon>
+        </p>
+      </mat-card-content>
 
+      <!-- Acciones -->
+      <mat-card-actions class="card-actions" *ngIf="userRole === 'Presidente' || isUserAssigned(event)">
+        <mat-form-field appearance="fill" style="width: 100%;">
+          <mat-label>Acción</mat-label>
+          <mat-select (selectionChange)="onStatusChange(event, $event)" >
+            
+            <!-- Opción Ver -->
+            <mat-option *ngIf=" isUserAssigned(event)" [value]="'ver'">
+              <mat-icon>visibility</mat-icon> Ver
+            </mat-option>
 
-     <mat-card-actions class="card-actions">
-  <mat-form-field appearance="fill" style="width: 100%;">
-    <mat-label>Acción</mat-label>
-    <mat-select (selectionChange)="onStatusChange(event, $event)" >
-      <!-- Opción Ver -->
-      <mat-option *ngIf=" isUserAssigned(event)" [value]="'ver'">
-        <mat-icon>visibility</mat-icon> Ver
-      </mat-option>
+            <!-- Opción Aprobar -->
+            <mat-option *ngIf="userRole === 'Presidente' && (event.status === 'pendiente' || event.status === 'considerando')" [value]="'aprobar'">
+              <mat-icon>check_circle</mat-icon> Aprobar
+            </mat-option>
 
-      <!-- Opción Aprobar -->
-      <mat-option *ngIf="userRole === 'Presidente' && (event.status === 'pendiente' || event.status === 'considerando')" [value]="'aprobar'">
-        <mat-icon>check_circle</mat-icon> Aprobar
-      </mat-option>
+            <!-- Opción Considerando -->
+            <mat-option *ngIf="userRole === 'Presidente' && (event.status === 'pendiente' || event.status === 'considerando')" [value]="'considerando'">
+              <mat-icon>check_circle</mat-icon> Considerando
+            </mat-option>
 
-       <mat-option *ngIf="userRole === 'Presidente' && (event.status === 'pendiente' || event.status === 'considerando')" [value]="'considerando'">
-        <mat-icon>check_circle</mat-icon> Considerando
-      </mat-option>
-      
-      
-      <!-- Opción Cancelar -->
-      <mat-option *ngIf="(userRole === 'Presidente' || userRole === 'Secretaria') && (event.status !== 'pendiente' && event.status !== 'cancelado')" [value]="'cancelar'">
-        <mat-icon>cancel</mat-icon> Cancelar
-      </mat-option>
+            <!-- Opción Cancelar -->
+            <mat-option *ngIf="(userRole === 'Presidente' || userRole === 'Secretaria') && (event.status !== 'pendiente' && event.status !== 'cancelado')" [value]="'cancelar'">
+              <mat-icon>cancel</mat-icon> Cancelar
+            </mat-option>
 
-      <!-- Opción Eliminar -->
-      <mat-option *ngIf="event.status === 'Pendiente' || event.status === 'cancelado'" [value]="'eliminar'">
-        <mat-icon>delete</mat-icon> Eliminar
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-</mat-card-actions>
-
-   
-
+            <!-- Opción Eliminar -->
+            <mat-option *ngIf="event.status === 'pendiente' || event.status === 'cancelado'" [value]="'eliminar'">
+              <mat-icon>delete</mat-icon> Eliminar
+            </mat-option>
+            
+          </mat-select>
+        </mat-form-field>
+      </mat-card-actions>
+    </ng-template>
   </mat-card>
 </div>

@@ -74,6 +74,7 @@ export class EventListComponent implements OnInit {
     this.realtime.joinRoom('secretarias');
     this.realtime.onEventApproved().subscribe(event => this.loadEvents());
     this.realtime.onEventConsidered().subscribe(event => this.loadEvents());
+    this.realtime.onEventCanceled().subscribe(event => this.loadEvents());
     this.onTabChange(0);
   }
 
