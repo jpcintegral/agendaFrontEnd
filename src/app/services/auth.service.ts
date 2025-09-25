@@ -32,6 +32,27 @@ export class AuthService {
     return localStorage.setItem('rolUserAgenda',rol);
   }
 
+   getRolUser(){
+    return localStorage.getItem('rolUserAgenda');
+  }
+
+   setAreasUsuario(user: any) {
+        const areas: number[] = [];
+
+        if (user.area) {
+          areas.push(user.area.id);
+        }
+
+        if (Array.isArray(user.areas)) {
+          user.areas.forEach((a: any) => areas.push(a.id));
+        }
+        
+        return  localStorage.setItem('AUSRAgenda',JSON.stringify(areas));
+  }
+
+  getAreasUsuario(){
+    return localStorage.getItem('AUSRAgenda');
+  }
   
 
   logout() {

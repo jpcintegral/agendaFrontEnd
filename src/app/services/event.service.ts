@@ -20,7 +20,7 @@ export class EventService {
   }
 
   getEvents() {
-    return this.http.get(this.baseUrl, this.getHeaders());
+    return this.http.get(`${this.baseUrl}?populate=*`);
   }
 
   createEvent(payload: any) {

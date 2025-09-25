@@ -12,6 +12,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDialog } from '@angular/material/dialog';
 import { DetalleEventoComponent, DetalleEventoData } from '../detalle-evento/detalle-evento.component';
 import { MatSelect } from '@angular/material/select';
+import { AuthService } from '../../services/auth.service';
 
 
 type EventStatus = 'aprobado' | 'considerando' | 'pendiente' | 'cancelado';
@@ -42,11 +43,13 @@ interface ApproveEventResponse {
 export class EventListComponent implements OnInit {
   events: any[] = [];
   filteredEvents: any[] = [];
-  userRole = 'presidente'; // o 'presidente', dinámico según sesión
+  userRole : any = [];
+  userArreas: any = []
   currentUserId = 5; // ejemplo
   selectedStatus: EventStatus | 'todos' = 'todos';
   filterStatus: 'all' | 'aprobado' | 'considerando' | 'pendiente' | 'cancelado' = 'all';
   eventosConflicto: any[] = []
+
   
 
 
@@ -58,9 +61,12 @@ export class EventListComponent implements OnInit {
     cancelado: 0
   };
 
-  constructor(private eventService: EventService, private realtime: RealtimeService,private snackBar: MatSnackBar, private dialog : MatDialog ) {}
+  constructor(private eventService: EventService, private auth :AuthService, private realtime: RealtimeService,private snackBar: MatSnackBar, private dialog : MatDialog ) {}
 
   ngOnInit() {
+
+  this.userRole = this.auth.getRolUser();
+  this.userArreas = this.auth.getAreasUsuario();
     this.loadEvents();
 
     // Real-time updates
@@ -71,36 +77,53 @@ export class EventListComponent implements OnInit {
     this.onTabChange(0);
   }
 
-  loadEvents() {
+
+    loadEvents() {
+     
     this.eventService.getEvents().subscribe((res: any) => {
-      this.events = res.data || [];
+    let eventos = res.data || [];
+        console.log("rol desde eventos",this.userRole);
+       console.log("areas desde venetos",this.userArreas); 
 
-      // Inicializar contadores
-      this.statusCounts = { aprobado: 0, considerando: 0, pendiente: 0, cancelado: 0 };
+    if (this.userRole === 'Areas' ) {
+      console.log("entro al filtro")
+    // Filtrar solo los eventos que tengan al menos una área del usuario
+      
+      const userAreaIds = this.userArreas; // Devuelve un array de IDs de áreas del usuario
+      eventos = (eventos as any[]).filter(event =>
+        event.areas.some((area: any) => userAreaIds.includes(area.id))
+      );
+    
+    }else{
+      console.log("no entro al filtro");
+    }
+     this.events = eventos;
+    // Inicializar contadores
+    this.statusCounts = { aprobado: 0, considerando: 0, pendiente: 0, cancelado: 0 };
 
-      // Incrementar contadores
-      this.events.forEach(event => {
-        const key = event.status as EventStatus;
-        if (this.statusCounts.hasOwnProperty(key)) {
-          this.statusCounts[key]++;
-        }
-      });
-
-      // Ordenar: por estado primero, luego por fecha
-      const statusOrder: EventStatus[] = ['aprobado', 'considerando', 'pendiente', 'cancelado'];
-      this.events.sort((a, b) => {
-        const statusDiff = statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status);
-        if (statusDiff !== 0) return statusDiff;
-        return new Date(a.startDateTime).getTime() - new Date(b.startDateTime).getTime();
-      });
-
-      // Asignar número de orden
-      this.events.forEach((event, i) => event.order = i + 1);
-
-      // Aplicar filtro inicial
-      this.filterEvents();
+    // Incrementar contadores
+    this.events.forEach(event => {
+      const key = event.status as EventStatus;
+      if (this.statusCounts.hasOwnProperty(key)) {
+        this.statusCounts[key]++;
+      }
     });
-  }
+
+    // Ordenar: por estado primero, luego por fecha
+    const statusOrder: EventStatus[] = ['aprobado', 'considerando', 'pendiente', 'cancelado'];
+    this.events.sort((a, b) => {
+      const statusDiff = statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status);
+      if (statusDiff !== 0) return statusDiff;
+      return new Date(a.startDateTime).getTime() - new Date(b.startDateTime).getTime();
+    });
+
+    // Asignar número de orden
+    this.events.forEach((event, i) => event.order = i + 1);
+
+    // Aplicar filtro inicial
+    this.filterEvents();
+  });
+}
 
  // Filtrar eventos por tab
 filterEvents() {
@@ -124,7 +147,7 @@ updateOrderBadges() {
 
 
   isUserAssigned(event: any): boolean {
-    return event.assignedUsers?.some((u: any) => u.id === this.currentUserId);
+    return true; // event.assignedUsers?.some((u: any) => u.id === this.currentUserId);
   }
 
 approveEvent(event: any) {

@@ -26,6 +26,9 @@ export class ErrorInterceptor implements HttpInterceptor {
           // Token inválido o expirado
           msg = 'Sesión expirada. Inicia sesión nuevamente.';
           localStorage.removeItem('tokenAgenda');
+          localStorage.removeItem('AUSRAgenda');
+          localStorage.removeItem('rolUserAgenda');
+                    
           this.router.navigate(['/login']);
         } else if (error.status === 403) {
           // Sin permisos

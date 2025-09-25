@@ -43,6 +43,7 @@ export class MenuComponent {
   logout() {
     localStorage.removeItem('tokenAgenda');
     localStorage.removeItem('rolUserAgenda');
+     localStorage.removeItem('AUSRAgenda');
     this.router.navigate(['/login']);
   }
 

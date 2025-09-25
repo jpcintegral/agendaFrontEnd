@@ -46,27 +46,27 @@
     <mat-label>Acción</mat-label>
     <mat-select (selectionChange)="onStatusChange(event, $event)" >
       <!-- Opción Ver -->
-      <mat-option *ngIf="userRole === 'secretaria' || userRole === 'presidente' || isUserAssigned(event)" [value]="'ver'">
+      <mat-option *ngIf=" isUserAssigned(event)" [value]="'ver'">
         <mat-icon>visibility</mat-icon> Ver
       </mat-option>
 
       <!-- Opción Aprobar -->
-      <mat-option *ngIf="userRole === 'presidente' && (event.status === 'pendiente' || event.status === 'considerando')" [value]="'aprobar'">
+      <mat-option *ngIf="userRole === 'Presidente' && (event.status === 'pendiente' || event.status === 'considerando')" [value]="'aprobar'">
         <mat-icon>check_circle</mat-icon> Aprobar
       </mat-option>
 
-       <mat-option *ngIf="userRole === 'presidente' && (event.status === 'pendiente' || event.status === 'considerando')" [value]="'considerando'">
+       <mat-option *ngIf="userRole === 'Presidente' && (event.status === 'pendiente' || event.status === 'considerando')" [value]="'considerando'">
         <mat-icon>check_circle</mat-icon> Considerando
       </mat-option>
       
       
       <!-- Opción Cancelar -->
-      <mat-option *ngIf="(userRole === 'presidente' || userRole === 'secretaria') && (event.status !== 'pendiente' && event.status !== 'cancelado')" [value]="'cancelar'">
+      <mat-option *ngIf="(userRole === 'Presidente' || userRole === 'Secretaria') && (event.status !== 'pendiente' && event.status !== 'cancelado')" [value]="'cancelar'">
         <mat-icon>cancel</mat-icon> Cancelar
       </mat-option>
 
       <!-- Opción Eliminar -->
-      <mat-option *ngIf="event.status === 'pendiente' || event.status === 'cancelado'" [value]="'eliminar'">
+      <mat-option *ngIf="event.status === 'Pendiente' || event.status === 'cancelado'" [value]="'eliminar'">
         <mat-icon>delete</mat-icon> Eliminar
       </mat-option>
     </mat-select>

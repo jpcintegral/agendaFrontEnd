@@ -38,4 +38,13 @@ export class RealtimeService {
       }
     });
   }
+
+  onEventCanceled(): Observable<any> {
+  return new Observable(observer => {
+    if (this.socket) {
+      this.socket.on('evento-cancelado', data => observer.next(data));
+    }
+  });
+}
+
 }
