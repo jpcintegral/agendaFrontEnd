@@ -1,11 +1,24 @@
-<mat-tab-group class="custom-tab-group" (selectedIndexChange)="onTabChange($event)">
-   <mat-tab label="Aprobados ({{ countByStatus('aprobado') }})" (click)="filterStatus='aprobado'; applyFilter()"></mat-tab>
-   <mat-tab label="Pendientes ({{ countByStatus('pendiente') }})" (click)="filterStatus='pendiente'; applyFilter()"></mat-tab>
-   <mat-tab label="Considerados ({{ countByStatus('considerando') }})" (click)="filterStatus='considerando'; applyFilter()"></mat-tab>
-   <mat-tab label="Todos ({{ events.length }})" (click)="filterStatus='all'; applyFilter()"></mat-tab>   
-   <mat-tab label="Cancelados ({{ countByStatus('cancelado') }})" (click)="filterStatus='cancelado'; applyFilter()"></mat-tab>
-</mat-tab-group>
+ <!--<mat-form-field appearance="outline" class="date-filter">
+  <mat-label>Filtrar por día</mat-label>
+  <input matInput [matDatepicker]="picker" [(ngModel)]="selectedDate" (dateChange)="onDateChange()" />
+  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+  <mat-datepicker #picker></mat-datepicker>
+</mat-form-field>-->
 
+<!-- Calendario tipo Google -->
+<app-calendar
+  [events]="getCalendarEvents()" 
+  [selectedDate]="selectedDate"
+  (daySelected)="applyFilter($event)">  
+</app-calendar>
+<div class="event-list-header">
+  <mat-tab-group class="custom-tab-group" (selectedIndexChange)="onTabChange($event)">
+     <mat-tab label="Aprobados ({{ countByStatus('aprobado') }})" (click)="selectedStatus='aprobado'; applyFilter()"></mat-tab>
+     <mat-tab label="Pendientes ({{ countByStatus('pendiente') }})" (click)="selectedStatus='pendiente'; applyFilter()"></mat-tab>
+     <mat-tab label="Considerados ({{ countByStatus('considerando') }})" (click)="selectedStatus='considerando'; applyFilter()"></mat-tab>
+     <mat-tab label="Todos ({{ countByStatus('todos') }})" (click)="selectedStatus='todos'; applyFilter()"></mat-tab>   
+     <mat-tab label="Cancelados ({{ countByStatus('cancelado') }})" (click)="selectedStatus='cancelado'; applyFilter()"></mat-tab>
+  </mat-tab-group>
 <div class="event-grid">
   <mat-card *ngFor="let event of filteredEvents" class="event-card" [ngClass]="getStatusClass(event.status)">
     

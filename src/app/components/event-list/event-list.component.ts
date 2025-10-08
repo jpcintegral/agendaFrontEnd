@@ -13,6 +13,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { DetalleEventoComponent, DetalleEventoData } from '../detalle-evento/detalle-evento.component';
 import { MatSelect } from '@angular/material/select';
 import { AuthService } from '../../services/auth.service';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { FormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
+import  {CalendarComponent} from '../calendar/calendar.component'
+import { CalendarEvent } from 'angular-calendar';
 
 
 type EventStatus = 'aprobado' | 'considerando' | 'pendiente' | 'cancelado';
@@ -37,6 +43,11 @@ interface ApproveEventResponse {
     MatIconModule,
     MatSelectModule,
     MatFormFieldModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    FormsModule,
+    MatInputModule,
+    CalendarComponent
     
   ]
 })
@@ -48,7 +59,9 @@ export class EventListComponent implements OnInit {
   currentUserId = 5; // ejemplo
   selectedStatus: EventStatus | 'todos' = 'todos';
   filterStatus: 'all' | 'aprobado' | 'considerando' | 'pendiente' | 'cancelado' = 'all';
-  eventosConflicto: any[] = []
+  eventosConflicto: any[] = [];
+  selectedDate: Date = new Date();
+  openDay: Date | null = null;
 
   
 
@@ -126,20 +139,10 @@ export class EventListComponent implements OnInit {
   });
 }
 
- // Filtrar eventos por tab
-filterEvents() {
-  if (this.selectedStatus === 'todos') {
-    this.filteredEvents = [...this.events];
-  } else {
-    this.filteredEvents = this.events.filter(e => e.status === this.selectedStatus);
-  }
 
-  // Recalcular order según el grupo filtrado
-  this.updateOrderBadges();
-}
 
-// Recalcula el número de orden de cada evento en filteredEvents
-updateOrderBadges() {
+ // Recalcula el número de orden de cada evento en filteredEvents
+ updateOrderBadges() {
   // Primero ordena por fecha dentro del grupo
   this.filteredEvents.sort((a, b) => new Date(a.startDateTime).getTime() - new Date(b.startDateTime).getTime());
   // Luego asigna el order
@@ -260,22 +263,83 @@ private deleteEvent(idEvent: string) {
     case 3: this.selectedStatus = 'todos'; break;
     case 4: this.selectedStatus = 'cancelado'; break;
   }
-  this.filterEvents();
+  //this.filterEvents();
+  this.applyFilter();
+}
+
+ // Filtrar eventos por tab
+filterEvents() {
+  if (this.selectedStatus === 'todos') {
+    this.filteredEvents = [...this.events];
+  } else {
+    this.filteredEvents = this.events.filter(e => e.status === this.selectedStatus);
+  }
+
+  // Recalcular order según el grupo filtrado
+  this.updateOrderBadges();
+}
+
+ applyFilter(selectedDay?: Date): void {
+  let filtered = [...this.events];
+
+    console.log("applyFilter");
+  // Tomar fecha del día seleccionado en el calendario (openDay) si no se pasa selectedDay
+  const dateToFilter = selectedDay || this.openDay || this.selectedDate;
+ 
+  if (dateToFilter) {
+     console.log("dateToFilter",dateToFilter);
+    const day = new Date(dateToFilter);
+    day.setHours(0, 0, 0, 0);
+
+    filtered = filtered.filter(e => {
+      const eventDate = new Date(e.startDateTime);
+      eventDate.setHours(0, 0, 0, 0);
+      return eventDate.getTime() === day.getTime();
+    });
+
+    // Mantener el día abierto
+    this.openDay = day;
+  }
+
+  // Filtrar por status
+  if (this.selectedStatus && this.selectedStatus !== 'todos') {
+    filtered = filtered.filter(e => e.status === this.selectedStatus);
+  }
+
+  this.filteredEvents = filtered;
+  this.updateOrderBadges();
 }
 
 
-  applyFilter() {
-    if (this.filterStatus === 'all') {
-      this.filteredEvents = this.events;
-    } else {
-      this.filteredEvents = this.events.filter(e => e.status === this.filterStatus);
-    }
-  }
   
     // Contadores por estado
-  countByStatus(status: string) {
-    return this.events.filter(e => e.status === status).length;
-  }
+countByStatus(status: string) {
+  const dateToFilter = this.openDay || this.selectedDate;
+
+  return this.events.filter(e => {
+    // Filtrar por fecha si hay un día seleccionado
+    if (dateToFilter) {
+      const day = new Date(dateToFilter);
+      day.setHours(0, 0, 0, 0);
+
+      const eventDate = new Date(e.startDateTime);
+      eventDate.setHours(0, 0, 0, 0);
+
+      if (eventDate.getTime() !== day.getTime()) {
+        return false; // Ignorar eventos de otro día
+      }
+    }
+
+    // Filtrar por estado si no es 'todos'
+    if (status !== 'todos') {
+      return e.status === status;
+    }
+
+    // Si es 'todos', incluir todos los eventos del día
+    return true;
+  }).length;
+}
+
 
   onStatusChange(evento: any, action: any) {
  const value = action.value;
@@ -320,12 +384,36 @@ private deleteEvent(idEvent: string) {
 
   abrirConflictosModal(){
      console.log("llamar modal")
-    if (this.eventosConflicto.length > 0) {
-  this.dialog.open(DetalleEventoComponent, {
-    width: '700px',
-    data: { eventos: this.eventosConflicto, isConflict: true } as DetalleEventoData
-  });
-}
+        if (this.eventosConflicto.length > 0) {
+      this.dialog.open(DetalleEventoComponent, {
+        width: '700px',
+        data: { eventos: this.eventosConflicto, isConflict: true } as DetalleEventoData
+      });
+    }
   }
+    onDateChange(): void {
+    this.applyFilter();
+  }
+
+  getStatusColor(status: string) {
+  switch (status) {
+    case 'aprobado': return { primary: '#43a047', secondary: '#43a047' };
+    case 'pendiente': return { primary: '#fbc02d', secondary: '#fbc02d' };
+    case 'considerando': return { primary: '#0288d1', secondary: '#0288d1' };
+    case 'cancelado': return { primary: '#9b0505', secondary: '#FFCDD2' };
+    default: return { primary: '#6c757d', secondary: '#E0E0E0' };
+  }
+}
+  getCalendarEvents(): CalendarEvent[] {
+  return this.events.map(e => ({
+    start: new Date(e.startDateTime),
+    end: new Date(e.endDateTime),
+    title: e.title,
+    color: this.getStatusColor(e.status),
+    meta: { originalEvent: e }
+  }));
+}
+
+
 
 }

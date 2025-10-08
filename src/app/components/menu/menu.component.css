@@ -85,3 +85,26 @@
 @media (max-width: 768px) {
   .content { padding: 8px; }
 }
+
+/* Forzar color blanco en el texto de los items */
+::ng-deep .sidenav .mdc-list-item__primary-text {
+  color: #ffffff !important;
+}
+
+/* Forzar color blanco en los iconos */
+::ng-deep .sidenav mat-icon {
+  color: #ffffff !important;
+}
+
+/* Hover */
+::ng-deep .sidenav .mat-list-item:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Alinear iconos al centro vertical del texto */
+::ng-deep .sidenav mat-icon[mat-list-icon] {
+  vertical-align: middle;      /* Alinea verticalmente */
+  line-height: 1;               /* Ajusta altura de línea */
+  margin-right: 16px;           /* Espacio entre icono y texto */
+  font-size: 24px;              /* Tamaño estándar de icono */
+}

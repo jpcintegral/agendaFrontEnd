@@ -15,3 +15,41 @@ mat-card-subtitle {
 mat-card-content p {
   margin: 4px 0;
 }
+
+.dialog-content {
+  max-height: 70vh;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.event-detail-card {
+  margin-bottom: 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.event-content p {
+  margin: 6px 0;
+  color: #555;
+}
+
+.description-block {
+  margin-bottom: 12px;
+}
+
+.description-text {
+  max-height: 150px;
+  overflow-y: auto;
+  background: #fafafa;
+  border-radius: 8px;
+  padding: 8px;
+  white-space: pre-line; /* respeta saltos de línea */
+  word-wrap: break-word; /* fuerza salto en palabras largas */
+  overflow-wrap: break-word; /* compatibilidad moderna */
+  line-height: 1.4;
+  color: #444;
+}
+
+.dialog-title {
+  font-weight: 600;
+  color: #333;
+}

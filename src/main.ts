@@ -4,10 +4,13 @@ import { appConfig } from './app/app.config';
 import { provideRouter } from '@angular/router';
 import { routes } from './app/app.routes';
 import { provideAnimations } from '@angular/platform-browser/animations';
+import { registerLocaleData } from '@angular/common';
+import localeEs from '@angular/common/locales/es';
+registerLocaleData(localeEs); 
 
 bootstrapApplication(AppComponent, {
   providers: [
-    provideRouter(routes),
+    provideRouter(routes),    
     provideAnimations(),
     ...appConfig.providers
   ]

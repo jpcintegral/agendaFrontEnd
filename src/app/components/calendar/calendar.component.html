@@ -1,0 +1,157 @@
+<div class="calendar-container">
+  <div class="calendar-toolbar">
+    <div class="center-title">
+      <h2>{{ currentMonth | titlecase }}</h2>
+    </div>
+
+    <div class="calendar-header">
+      <div class="left-controls">
+        <button mat-button (click)="previous()">&#10094;</button>
+        <button mat-button (click)="today()">Hoy</button>
+        <button mat-button (click)="next()">&#10095;</button>
+      </div>
+
+      <div class="right-controls">
+        <mat-button-toggle-group [value]="view" (change)="setView($event.value)">
+          <mat-button-toggle [value]="CalendarView.Month">Mes</mat-button-toggle>
+          <mat-button-toggle [value]="CalendarView.Week">Semana</mat-button-toggle>
+          <mat-button-toggle [value]="CalendarView.Day">Día</mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vista Mes -->
+  <mwl-calendar-month-view
+    *ngIf="view === CalendarView.Month"
+    [viewDate]="viewDate"
+    [events]="events"
+    [refresh]="refresh"
+    [locale]="locale"
+    class="custom-calendar"
+    (dayClicked)="dayClicked($event.day)"
+    [eventTitleTemplate]="monthEventTemplate">
+  </mwl-calendar-month-view>
+
+  <ng-template #monthEventTemplate let-event="event">
+    <div class="custom-event" [ngClass]="getStatusClass(event.meta.originalEvent.status)">
+      {{ event.title }}
+    </div>
+  </ng-template>
+
+  <!-- Eventos abiertos al hacer clic en un día -->
+  <div *ngIf="openDay" class="open-day-events">
+    <h4>Eventos aprobados del {{ openDay | date:'fullDate':'':'es' }}</h4>
+    <mat-card *ngFor="let event of eventsForOpenDay()" 
+              class="event-card" 
+              [ngClass]="getStatusClass(event.meta.originalEvent.status)">
+      <div *ngIf="event.meta.originalEvent.status === 'aprobado'">
+
+        <!-- Tarjeta especial para eventos privados -->
+        <ng-container *ngIf="event.meta.originalEvent.type === 'privado' ; else normalCard">
+          <mat-card-header>
+            <mat-card-title>Evento Privado 🔒</mat-card-title>
+            <mat-card-subtitle>
+              <span>{{ event.start | date:'h:mm a' }} - {{ event.end | date:'h:mm a' }}</span>
+              | 
+              <span *ngIf="event.meta.originalEvent.needsBudget || event.meta.originalEvent.estimatedBudget" class="budget-badge">
+                <ng-container *ngIf="event.meta.originalEvent.needsBudget">Requiere Presupuesto</ng-container>
+                <ng-container *ngIf="event.meta.originalEvent.needsBudget && event.meta.originalEvent.estimatedBudget"> | </ng-container>
+                <ng-container *ngIf="event.meta.originalEvent.estimatedBudget">
+                  Estimado: {{ event.meta.originalEvent.estimatedBudget | currency:'MXN':'symbol':'1.0-0' }}
+                </ng-container>
+              </span>
+            </mat-card-subtitle>
+          </mat-card-header>
+        </ng-container>
+
+        <!-- Tarjeta normal -->
+        <ng-template #normalCard>
+          <mat-card-header>
+            <mat-card-title>{{ event.title }}</mat-card-title>
+            <mat-card-subtitle>
+              <span>{{ event.start | date:'h:mm a' }} - {{ event.end | date:'h:mm a' }} | </span>
+              <span *ngIf="event.meta.originalEvent.needsBudget || event.meta.originalEvent.estimatedBudget" class="budget-badge">
+                <ng-container *ngIf="event.meta.originalEvent.needsBudget">Requiere Presupuesto</ng-container>
+                <ng-container *ngIf="event.meta.originalEvent.needsBudget && event.meta.originalEvent.estimatedBudget"> | </ng-container>
+                <ng-container *ngIf="event.meta.originalEvent.estimatedBudget">
+                  Estimado: {{ event.meta.originalEvent.estimatedBudget | currency:'MXN':'symbol':'1.0-0' }}
+                </ng-container>
+              </span>
+              <mat-icon class="view-icon" (click)="detalleEvento(event.meta.originalEvent, $event)" matTooltip="Ver detalle">
+                visibility
+              </mat-icon>
+            </mat-card-subtitle>
+          </mat-card-header>
+        </ng-template>
+
+      </div>
+    </mat-card>
+  </div>
+
+  <!-- Vista Semana -->
+  <ng-template #weekViewEventTemplate let-weekEvent="weekEvent">
+    <div *ngIf="weekEvent.event.meta.originalEvent.status === 'aprobado'" class="custom-event" [ngClass]="getStatusClass(weekEvent.event.meta.originalEvent.status)">
+      <ng-container *ngIf="weekEvent.event.meta.originalEvent.type === 'privado'; else normalCardWeek">
+        <mat-card-header>
+          <mat-card-title>Evento Privado 🔒</mat-card-title>
+          <mat-card-subtitle>
+            <span>{{ weekEvent.event.start | date:'h:mm a' }} - {{ weekEvent.event.end | date:'h:mm a' }}</span>
+            | 
+            <span *ngIf="weekEvent.event.meta.originalEvent.needsBudget || weekEvent.event.meta.originalEvent.estimatedBudget" class="budget-badge">
+              <ng-container *ngIf="weekEvent.event.meta.originalEvent.needsBudget">Requiere Presupuesto</ng-container>
+              <ng-container *ngIf="weekEvent.event.meta.originalEvent.needsBudget && weekEvent.event.meta.originalEvent.estimatedBudget"> | </ng-container>
+              <ng-container *ngIf="weekEvent.event.meta.originalEvent.estimatedBudget">
+                Estimado: {{ weekEvent.event.meta.originalEvent.estimatedBudget | currency:'MXN':'symbol':'1.0-0' }}
+              </ng-container>
+            </span>
+          </mat-card-subtitle>
+        </mat-card-header>
+      </ng-container>
+
+      <ng-template #normalCardWeek>
+        <mat-card-header>
+          <mat-card-title>{{ weekEvent.event.title }}</mat-card-title>
+          <mat-card-subtitle>
+            <span>{{ weekEvent.event.start | date:'h:mm a' }} - {{ weekEvent.event.end | date:'h:mm a' }} | </span>
+            <span *ngIf="weekEvent.event.meta.originalEvent.needsBudget || weekEvent.event.meta.originalEvent.estimatedBudget" class="budget-badge">
+              <ng-container *ngIf="weekEvent.event.meta.originalEvent.needsBudget">Requiere Presupuesto</ng-container>
+              <ng-container *ngIf="weekEvent.event.meta.originalEvent.needsBudget && weekEvent.event.meta.originalEvent.estimatedBudget"> | </ng-container>
+              <ng-container *ngIf="weekEvent.event.meta.originalEvent.estimatedBudget">
+                Estimado: {{ weekEvent.event.meta.originalEvent.estimatedBudget | currency:'MXN':'symbol':'1.0-0' }}
+              </ng-container>
+            </span>
+            <mat-icon class="view-icon" (click)="detalleEvento(weekEvent.event.meta.originalEvent, $event)" matTooltip="Ver detalle">
+              visibility
+            </mat-icon>
+          </mat-card-subtitle>
+        </mat-card-header>
+      </ng-template>
+    </div>
+  </ng-template>
+
+  <div class="week-view-container">
+    <mwl-calendar-week-view
+      *ngIf="view === CalendarView.Week"
+      [viewDate]="viewDate"
+      [events]="getApprovedEvents()"
+      [refresh]="refresh"
+      [locale]="locale"
+      class="custom-calendar"
+      [eventTemplate]="weekViewEventTemplate">
+    </mwl-calendar-week-view>
+  </div>
+
+  <!-- Vista Día -->
+  <div class="day-view-container">
+    <mwl-calendar-day-view
+      *ngIf="view === CalendarView.Day"
+      [viewDate]="viewDate"
+      [events]="getApprovedEventsForDay()"
+      [refresh]="refresh"
+      [locale]="locale"
+      class="custom-calendar"
+      [eventTemplate]="weekViewEventTemplate">
+    </mwl-calendar-day-view>
+  </div>
+</div>

@@ -28,6 +28,7 @@ export interface DetalleEventoData {
 export class DetalleEventoComponent {
   eventos: any[] = [];
   isConflict = false;
+    esPresidente = false;
 
   constructor(
     public dialogRef: MatDialogRef<DetalleEventoComponent>,
@@ -40,5 +41,21 @@ export class DetalleEventoComponent {
 
   cerrar() {
     this.dialogRef.close();
+  }
+
+
+    aprobarEventoYCancelarConflictos() {
+    const eventoSeleccionado = this.eventos[0]; // asumimos que es el primero o el que el usuario seleccionó
+    // Lógica real: llamar al backend para actualizar estados
+    console.log('Evento aprobado:', eventoSeleccionado);
+    console.log('Se cancelan los demás eventos en conflicto:', this.eventos.slice(1));
+
+    // Después cerrar el modal
+    this.dialogRef.close({ aprobado: eventoSeleccionado, cancelados: this.eventos.slice(1) });
+  }
+
+  obtenerUsuarioActual() {
+    // Simulación: reemplazar con servicio real de autenticación
+    return { nombre: 'Juan Pérez', rol: 'PRESIDENTE' };
   }
 }
