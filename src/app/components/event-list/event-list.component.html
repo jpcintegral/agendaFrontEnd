@@ -9,6 +9,8 @@
 <app-calendar
   [events]="getCalendarEvents()" 
   [selectedDate]="selectedDate"
+  [userRole]="userRole"
+  [userArreas]="userArreas"
   (daySelected)="applyFilter($event)">  
 </app-calendar>
 <div class="event-list-header">

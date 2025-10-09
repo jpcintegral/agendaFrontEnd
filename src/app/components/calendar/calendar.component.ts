@@ -45,6 +45,9 @@ registerLocaleData(localeEs);
 export class CalendarComponent implements OnChanges {
   @Input() events: CalendarEvent[] = [];
   @Input() selectedDate: Date = new Date();
+  @Input() userRole : any = [];
+  @Input() userArreas: any = []
+  
   @Output() daySelected = new EventEmitter<Date>();
   locale: string = 'es';
 
