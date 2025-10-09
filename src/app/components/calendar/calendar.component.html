@@ -49,7 +49,7 @@
       <div *ngIf="event.meta.originalEvent.status === 'aprobado'">
 
         <!-- Tarjeta especial para eventos privados -->
-        <ng-container *ngIf="event.meta.originalEvent.type === 'privado'  && userRole !== 'Presidente' ; else normalCard">
+        <ng-container *ngIf="userRole && event.meta.originalEvent.type === 'privado'  && userRole !== 'Presidente' ; else normalCard">
           <mat-card-header>
             <mat-card-title>Evento Privado 🔒</mat-card-title>
             <mat-card-subtitle>
