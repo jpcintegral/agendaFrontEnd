@@ -33,8 +33,14 @@ export class LoginComponent {
     });
   }
 
+  logout() {
+    localStorage.removeItem('tokenAgenda');
+    localStorage.removeItem('rolUserAgenda');
+     localStorage.removeItem('AUSRAgenda');
+  }
   submit() {
     if (!this.form.valid) return;
+    this.logout();
     const { identifier, password } = this.form.value;
     this.auth.login(identifier, password).subscribe({
       next: (res: any) => {
