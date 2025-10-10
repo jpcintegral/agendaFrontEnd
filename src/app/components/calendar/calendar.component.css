@@ -354,3 +354,13 @@ mat-card-title {
     font-size: 0.6rem;
   }
 }
+
+.day-header {
+  background-color: #f5f5f5;
+  padding: 8px 0;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  color: #444;
+  font-weight: 600;
+  text-transform: capitalize;
+}

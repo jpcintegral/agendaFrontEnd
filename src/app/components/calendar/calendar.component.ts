@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, Output, EventEmitter , ChangeDetectorRef  } from '@angular/core';
 import { CommonModule, formatDate, registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
 import { FormsModule } from '@angular/forms';
@@ -8,7 +8,7 @@ import {
   CalendarWeekModule,
   CalendarDayModule,
   CalendarView,
-  CalendarCommonModule
+  CalendarCommonModule,
 } from 'angular-calendar';
 import { Subject } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
@@ -59,7 +59,7 @@ export class CalendarComponent implements OnChanges {
   // Para abrir/cerrar los eventos de un día
   openDay: Date | null = null;
 
-   constructor (private dialog : MatDialog ){}
+   constructor (private dialog : MatDialog, private changeDetectorRef: ChangeDetectorRef ){}
 
   ngOnChanges(changes: SimpleChanges): void {
     this.viewDate = this.selectedDate || new Date();
@@ -99,6 +99,7 @@ export class CalendarComponent implements OnChanges {
     } else {
       this.viewDate = new Date(this.viewDate.setDate(this.viewDate.getDate() - 1));
     }
+      this.changeDetectorRef.detectChanges();
   }
 
   next(): void {
@@ -109,12 +110,14 @@ export class CalendarComponent implements OnChanges {
     } else {
       this.viewDate = new Date(this.viewDate.setDate(this.viewDate.getDate() + 1));
     }
+
+      this.changeDetectorRef.detectChanges();
+    
   }
 
   today() {
     this.viewDate = new Date();
-    this.refresh.next();
-    console.log('Ir a hoy:', this.viewDate);
+    window.location.reload();
   }
 
     getStatusClass(status: EventStatus): string {
@@ -169,7 +172,6 @@ export class CalendarComponent implements OnChanges {
           color: e.color,
           meta: e.meta
         }));
-         console.log("result",result)
          return result;
     }
 
