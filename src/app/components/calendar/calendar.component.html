@@ -169,6 +169,10 @@
       [eventTemplate]="weekViewEventTemplate">
     </mwl-calendar-week-view>
   </div>
+ 
+  <div *ngIf="view === CalendarView.Day" class="day-header text-center">
+  <h2>{{ viewDate | date: 'EEEE, d MMMM y' }}</h2>
+</div>
 
   <!-- Vista Día -->
   <div class="day-view-container">
