@@ -4,30 +4,53 @@
 
 <mat-dialog-content class="dialog-content">
   <mat-card *ngFor="let evento of eventos" class="event-detail-card">
-    <mat-card-title>{{ evento.title }}</mat-card-title>
-    <mat-card-subtitle>
-      Tipo: {{ evento.type | titlecase }} |
-      Duración: {{ evento.durationHours }} h |
-      Estado: {{ evento.status | uppercase }}
-    </mat-card-subtitle>
 
-    <mat-divider></mat-divider>
-
-    <mat-card-content class="event-content">
-      <div class="description-block">
-        <strong>Descripción:</strong>
-        <p class="description-text">
-          {{ evento.description || 'Sin descripción' }}
+    <!-- Evento PRIVADO y usuario NO es Presidente -->
+    <ng-container *ngIf="evento.type === 'privado' && !esPresidente; else fullDetails">
+      <mat-card-title>Evento Privado 🔒</mat-card-title>
+      <mat-card-subtitle>
+        <strong>Horario:</strong>
+        {{ evento.startDateTime | date:'shortTime' }} - {{ evento.endDateTime | date:'shortTime' }}
+         Duración: {{ evento.durationHours }} h |
+        Estado: {{ evento.status | uppercase }}
+      </mat-card-subtitle>
+      <mat-divider></mat-divider>
+      <mat-card-content>
+        <p class="text-muted">
+          🔐 Información restringida para usuarios no autorizados.
         </p>
-      </div>
+      </mat-card-content>
+    </ng-container>
 
-      <p><strong>Fecha inicio:</strong> {{ evento.startDateTime | date:'short' }}</p>
-      <p><strong>Fecha fin:</strong> {{ evento.endDateTime | date:'short' }}</p>
-      <p *ngIf="evento.needsBudget"><strong>Presupuesto requerido:</strong> Sí</p>
-      <p *ngIf="evento.estimatedBudget">
-        <strong>Estimado:</strong> {{ evento.estimatedBudget | currency:'MXN':'symbol':'1.0-0' }}
-      </p>
-    </mat-card-content>
+    <!-- Detalle completo para Presidente o evento no privado -->
+    <ng-template #fullDetails>
+      <mat-card-title>{{ evento.title }}</mat-card-title>
+      <mat-card-subtitle>
+        Tipo: {{ evento.type | titlecase }} |
+        Duración: {{ evento.durationHours }} h |
+        Estado: {{ evento.status | uppercase }}
+      </mat-card-subtitle>
+
+      <mat-divider></mat-divider>
+
+      <mat-card-content class="event-content">
+        <div class="description-block">
+          <strong>Descripción:</strong>
+          <p class="description-text">
+            {{ evento.description || 'Sin descripción' }}
+          </p>
+        </div>
+
+        <p><strong>Fecha inicio:</strong> {{ evento.startDateTime | date:'short' }}</p>
+        <p><strong>Fecha fin:</strong> {{ evento.endDateTime | date:'short' }}</p>
+
+        <p *ngIf="evento.needsBudget"><strong>Presupuesto requerido:</strong> Sí</p>
+        <p *ngIf="evento.estimatedBudget">
+          <strong>Estimado:</strong> {{ evento.estimatedBudget | currency:'MXN':'symbol':'1.0-0' }}
+        </p>
+      </mat-card-content>
+    </ng-template>
+
   </mat-card>
 </mat-dialog-content>
 
@@ -37,8 +60,8 @@
     *ngIf="isConflict && esPresidente"
     mat-flat-button
     color="warn"
-    (click)="aprobarEventoYCancelarConflictos()"
+    (click)="cancelarConflictos()"
   >
-    Aprobar evento y cancelar conflictos
+    cancelar en conflicto
   </button>
 </mat-dialog-actions>

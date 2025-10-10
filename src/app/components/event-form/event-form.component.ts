@@ -15,6 +15,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { DetalleEventoComponent, DetalleEventoData } from '../detalle-evento/detalle-evento.component';
 import { MatIconModule } from '@angular/material/icon';
+import { AuthService } from '../../services/auth.service';
 
 
 
@@ -45,9 +46,9 @@ export class EventFormComponent implements OnInit {
   durationHours = 1;
   loading = false; 
   eventosConflicto: any[] =[];
-  userRol: any = localStorage.getItem('rolUserAgenda');
+  userRole: any = [];
 
-  constructor(private fb: FormBuilder, private eventService: EventService, private router: Router,private snackBar: MatSnackBar, private dialog : MatDialog ) {
+  constructor(private fb: FormBuilder, private eventService: EventService, private router: Router,private snackBar: MatSnackBar, private dialog : MatDialog,private auth :AuthService ) {
   
   }
  
@@ -56,6 +57,7 @@ export class EventFormComponent implements OnInit {
   
   ngOnInit() {
     
+    this.userRole = this.auth.getRolUser();
     const startDateObj = this.event?.startDateTime ? new Date(this.event.startDateTime) : null;
     const endDateObj = this.event?.endDateTime ? new Date(this.event.endDateTime) : null;
 
@@ -197,7 +199,7 @@ export class EventFormComponent implements OnInit {
     if (this.eventosConflicto.length > 0) {
   this.dialog.open(DetalleEventoComponent, {
     width: '700px',
-    data: { eventos: this.eventosConflicto, isConflict: true } as DetalleEventoData
+    data: { eventos: this.eventosConflicto, isConflict: true,userRol : this.userRole } as DetalleEventoData
   });
 }
   }

@@ -185,11 +185,11 @@ approveEvent(event: any) {
   });
 }
 
-private cancelEvent(idEvent: string) {
-  if (!idEvent) return;
+private cancelEvent(documentId: string) {
+  if (!documentId) return;
 
   if (confirm('¿Seguro que deseas cancelar este evento?')) {
-    this.eventService.updateEvent(idEvent, { status: 'cancelado' }).subscribe({
+    this.eventService.updateEvent(documentId, { status: 'cancelado' }).subscribe({
       next: (res: any) => {
         console.log('Evento cancelado:', res);
         this.snackBar.open('Evento cancelado con éxito', 'Cerrar', { duration: 3000 });
@@ -387,7 +387,7 @@ countByStatus(status: string) {
         if (this.eventosConflicto.length > 0) {
       this.dialog.open(DetalleEventoComponent, {
         width: '700px',
-        data: { eventos: this.eventosConflicto, isConflict: true } as DetalleEventoData
+        data: { eventos: this.eventosConflicto, isConflict: true, userRol : this.userRole } as DetalleEventoData
       });
     }
   }
