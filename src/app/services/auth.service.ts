@@ -2,16 +2,22 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { jwtDecode } from 'jwt-decode';
 import { environment } from '../../environments/environments.prod';
+import * as CryptoJS from 'crypto-js';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
  private baseUrl = `${environment.urlBackend}/api/auth/local`;
+  private secretKey = environment.secretKey;
 
 
   constructor(private http: HttpClient) {}
 
   login(identifier: string, password: string) {
-    return this.http.post(this.baseUrl, { identifier, password });
+    const encryptedData = CryptoJS.AES.encrypt(
+      JSON.stringify({ identifier: identifier, password }),
+      this.secretKey
+    ).toString();
+    return this.http.post(`${environment.urlBackend}/api/auth/encrypted-login`, { encryptedData });
   }
 
   
